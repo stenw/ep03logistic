@@ -1,5 +1,4 @@
 library(devtools)
-library(devtools)
 
 bmt <- foreign::read.spss(file='./data-raw/bmt.sav', to.data.frame=TRUE)
 usethis::use_data(bmt, overwrite = TRUE)
@@ -9,4 +8,9 @@ fracture <- foreign::read.spss(file='./data-raw/fracture.sav', to.data.frame=TRU
 usethis::use_data(fracture, overwrite = TRUE)
 LBW <- foreign::read.spss(file='./data-raw/LBW.sav', to.data.frame=TRUE)
 usethis::use_data(LBW, overwrite = TRUE)
-
+teeth <- read.table('./data-raw/teeth.dat', header = TRUE)
+usethis::use_data(teeth, overwrite = TRUE)
+epilepsy <- read.table('./data-raw/epilepsy.dat', header = TRUE)
+usethis::use_data(epilepsy, overwrite = TRUE)
+melanoma <- read.table('./data-raw/melanoma.dat', header = TRUE)
+usethis::use_data(melanoma, overwrite = TRUE)

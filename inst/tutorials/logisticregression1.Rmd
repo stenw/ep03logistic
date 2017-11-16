@@ -1,0 +1,209 @@
+---
+title: "Logistic regression 1"
+output: 
+  learnr::tutorial:
+     allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library("learnr")
+data("bmt", package = "EP03logistic")
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Quiz
+
+The following questions test your knowledge about logistic regression, odds and odds ratios.
+
+### Question 1
+
+In Clements et. al. (1999) the effect of a high dose vs a low dose of D-Penicillamine in early diffuse systemic scleloris is investigated. 25 of the 36 patients that received a low dose responded while in the high dose group 17 out of 32 responded.
+```{r Q1}
+quiz(
+  question("What is the probability of responding in the low dose group?",
+    answer("Less than 40%"),
+    answer("Between 40% and 60%"),
+    answer("Between 60% and 80%", correct=TRUE),
+    answer("More than 80%"),
+        allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 2
+
+
+```{r Q2}
+quiz(
+  question("What are the odds of responding in the low dose group?",
+    answer("Less than 0.5"),
+    answer("Between 0.5 and 1"),
+    answer("Between 1 and 2"),
+    answer("More than 2", correct=TRUE),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 3
+
+
+```{r Q3}
+quiz(
+  question("What is the odds ratio of the low dose vs the high dose?",
+    answer("Less than 0.5"),
+    answer("Between 0.5 and 1"),
+    answer("Between 1 and 2"),
+    answer("More than 2", correct=TRUE),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 4
+
+```{r Q4}
+quiz(
+  question("What is the standard error of the log odds ratio of the dose?",
+    answer("approximately 0.5"),
+    answer("approximately 1", correct=TRUE),
+    answer("approximately 1.5"),
+    answer("approximately 2"),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 5
+
+```{r Q5}
+quiz(
+  question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
+    answer("< 0.5"),
+    answer("between 0.5 and 1"),
+    answer("between 1 and 1.5", correct=TRUE),
+    answer("between 1.5 and 2"),
+    answer("> 2"),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+## Exercises
+
+We will now examine how logistic regression can be used to investigate the risk of developing acute graft versus host disease after a bone marrow transplant. We will use the data set BMT.sav
+
+
+
+### Question 1
+Define a new variable sexmatch with value 1 if the receiver and donor have the same sex and value 0 if not. In R you can do this using:
+library(foreign)
+When reading in the SPSS file the file path between the quotes should correspond the location where the file is stored on your computer. R will give you a warning (as is frequently the case when importing SPSS files). In these exercises you can ignore this type of warning. 
+b.	Make a cross table of the outcome agvhd against sexmatch using the table function. Add the proportions of healthy and deseased with the prop.table function. Use chisq.test to perform a 2-test.
+
+Is there a significant relation between this variables?
+Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. 
+
+```{r P1, exercise=TRUE, exercise.lines = 10}
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+(tab1b <- table(bmt$agvhd, bmt$sexmatch, deparse.level = 2))
+prop.table(____, margin = 2)   
+chisq.test(____)
+
+```
+
+```{r P1-hint-1}
+# Just fill in the blanks
+```
+```{r P1-hint-2}
+# Use:
+(tab1b <- table(bmt$agvhd, bmt$sexmatch,deparse.level = 2))
+prop.table(tab1b, margin = 2)   
+chisq.test(tab1b)
+
+```
+
+### Question 2
+
+
+Now we will look at the relation using logistic regression.
+
+In R we can estimate a logistic regression model using the command `glm()`The first parameter indicates the model formula. On the left side of the ~ sign the dependent variable is specified (here agvhd); on the right hand side the explanatory variables (here the single variable sexmatch). The parameter family indicates the distribution we use. The default model for a binomial distribution is the logistic regression model. The last parameter specifies is the data set we use. 
+
+```{r P2-setup}
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+```
+
+```{r P2, exercise=TRUE, exercise.lines = 10}
+glm1<-glm(___ ~ ____, family = ____, data=___)
+glm1
+```
+
+```{r P2-hint-1}
+# Just fill in the blanks
+
+```
+```{r P2-hint-2}
+# The code is:
+glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
+glm1
+```
+
+### Question 3
+
+Use the summary command on the returned object to obtain the estimated coefficients standard errors and p-values from a Wald test. The odds ratios can be obtained by using exp(coef(glm1)). The function confint is used to obtain confidence estimates, again the exp function transforms them to the odds-ratio scale. Compare the OR with the results obtained in b).
+
+
+```{r P3-setup}
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
+ 
+```
+
+```{r P3, exercise=TRUE, exercise.lines = 10}
+```
+
+```{r P3-hint-1}
+# The code is:
+# summary(___)
+# exp(coef(___))
+# exp(confint(___))
+
+```
+
+
+```{r P3-hint-2}
+# The code is:
+summary(glm1)
+exp(coef(glm1))
+exp(confint(glm1))
+
+```
+
+### Question 4
+
+
+Using drop1(glm1, test='LR') we also obtain the p-values from a likelihood ratio (LR) test. Compare the results between the LR and Wald test. 
+
+```{r P4-setup}
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
+
+```
+
+```{r P4, exercise=TRUE, exercise.lines = 10}
+drop1(___, test=___)
+
+```
+
+```{r P4-hint-1}
+# Fill in the blanks
+```
+
+```{r P4-hint-2}
+# The code is:
+drop1(glm1, test='LRT')
+```
+

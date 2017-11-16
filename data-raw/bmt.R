@@ -1,5 +1,6 @@
 library(devtools)
-
+doll <- foreign::read.spss(file='./data-raw/doll.sav', to.data.frame=TRUE)
+usethis::use_data(doll, overwrite = TRUE)
 bmt <- foreign::read.spss(file='./data-raw/bmt.sav', to.data.frame=TRUE)
 usethis::use_data(bmt, overwrite = TRUE)
 ova <- foreign::read.spss(file='./data-raw/ova.sav', to.data.frame=TRUE)

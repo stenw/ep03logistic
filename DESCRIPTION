@@ -11,4 +11,5 @@ RoxygenNote: 6.0.1
 Imports:
   foreign,
   survival,
-  learnr
+  learnr,
+  Matrix

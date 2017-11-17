@@ -32,10 +32,10 @@ Consider the following output from a poisson regression:
 ```{r Q1}
 quiz(
   question("What is the p-value of the coefficient of age?",
-    answer("< 0.01"),
+    answer("smaller than 0.01"),
     answer("between 0.01 and 0.05"),
     answer("between 0.05 and 0.1", correct=TRUE),
-    answer("> 0.1"),
+    answer("larger than 0.1"),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -47,10 +47,10 @@ quiz(
 ```{r Q2}
 quiz(
   question("What is the p-value of the intervention?",
-    answer("< 0.01"),
+    answer("smaller than 0.01"),
     answer("between 0.01 and 0.05", correct=TRUE),
     answer("between 0.05 and 0.1"),
-    answer("> 0.1"),
+    answer("larger than 0.1"),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -112,7 +112,7 @@ The table below presents dose-response data concerning the relationship between 
 ### Question 1
 
 Confirm that the number of person years and the number of events in the data set `doll`. For this we need to weight the data. 
-```{r P1, exercise=TRUE, exercise.lines = 10}
+```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 w1 <- rep((1:NROW(doll)),doll$prsyears)
 with(doll[w1,], table(___, ___))
 w2 <-
@@ -140,7 +140,7 @@ xtabs(death~age+smoke, data=doll)
 Estimate a poisson model using only an intercept. Call the model glm1 What is the meaning of the estimated coefficient? Also estimate the coefficient by hand using the table.
 
 
-```{r P2, exercise=TRUE, exercise.lines = 10}
+```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 doll$logpy <- log(___)
 glm1<-glm(___~1+offset(____),  family=poisson, data=doll)
 summary(___)

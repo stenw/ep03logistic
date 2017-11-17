@@ -123,7 +123,7 @@ b.	Make a cross table of the outcome agvhd against sexmatch using the table func
 Is there a significant relation between this variables?
 Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. 
 
-```{r P1, exercise=TRUE, exercise.lines = 10}
+```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 (tab1b <- table(bmt$agvhd, bmt$sexmatch, deparse.level = 2))
 prop.table(____, margin = 2)   
@@ -153,7 +153,7 @@ In R we can estimate a logistic regression model using the command `glm()`The fi
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 ```
 
-```{r P2, exercise=TRUE, exercise.lines = 10}
+```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 glm1<-glm(___ ~ ____, family = ____, data=___)
 glm1
 ```
@@ -210,7 +210,7 @@ glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
 
 ```
 
-```{r P4, exercise=TRUE, exercise.lines = 10}
+```{r P4, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 drop1(___, test=___)
 
 ```
@@ -261,7 +261,7 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
 ```
 
-```{r P6, exercise=TRUE, exercise.lines = 10}
+```{r P6, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 y <- predict(____, type = ____)
 
 plot(x=bmt$agedon[order(bmt$agedon)],  
@@ -289,7 +289,7 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
 ```
 
-```{r P7, exercise=TRUE, exercise.lines = 10}
+```{r P7, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 glmAge2<-glm(____ ~ agedon+___, _____)
 anova(glmAge2, glmAge, test='LRT')
 ```
@@ -318,7 +318,7 @@ glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
 
 ```
 
-```{r P8, exercise=TRUE, exercise.lines = 10}
+```{r P8, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 glmMV <-
 
 ```
@@ -345,7 +345,7 @@ glmMV<-glm(agvhd ~ agedon+I(agedon^2)+agerec+sexmatch+diag, family = 'binomial',
 
 ```
 
-```{r P9, exercise=TRUE, exercise.lines = 12}
+```{r P9, exercise=TRUE, exercise.lines = 12, eval=FALSE}
 predict_data <- expand.grid(agedon=0:60,
            diag='acute nonlymphoblastic leukemia', 
            sexdon=levels(bmt$sexdon),

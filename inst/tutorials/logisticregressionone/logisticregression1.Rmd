@@ -8,6 +8,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library("learnr")
+library('EP03logistic')
 data("bmt", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
@@ -97,11 +98,11 @@ quiz(
 ```{r Q6}
 quiz(
   question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
-    answer("< 0.5"),
+    answer("smaller than 0.5"),
     answer("between 0.5 and 1"),
     answer("between 1 and 1.5", correct=TRUE),
     answer("between 1.5 and 2"),
-    answer("> 2"),
+    answer("larger than 2"),
     allow_retry = TRUE, random_answer_order = FALSE
   )
 )

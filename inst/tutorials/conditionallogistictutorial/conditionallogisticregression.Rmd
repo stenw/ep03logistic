@@ -8,6 +8,8 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library("learnr")
+library('survival')
+library('EP03logistic')
 data("endom", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```

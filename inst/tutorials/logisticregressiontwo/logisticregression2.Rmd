@@ -1,0 +1,402 @@
+---
+title: "Logistic regression 2"
+output: 
+  learnr::tutorial:
+     allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library("learnr")
+library('EP03logistic')
+data("bmt", package = "EP03logistic")
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Quiz
+
+The following questions test your knowledge about logistic regression, odds and odds ratios.
+
+### Question 1
+```{r Q1}
+quiz(
+  question("True or false (check all that apply)", 
+    type='multiple',         
+    answer("The confidence interval around an odds ratio is symetric"),
+    answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios"),
+    answer("An odds of one correspons to a probability of 50%", correct=TRUE),
+    answer("When a probability is one, the corresponding odds are infinite", correct=TRUE),
+    answer("The logistic function cannot reach values larger than one", correct=TRUE),
+    answer("The logit function can be used to convert probabilities to odds ", correct=TRUE),
+        allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 2
+
+In Clements et. al. (1999) the effect of a high dose vs a low dose of D-Penicillamine in early diffuse systemic scleloris is investigated. 25 of the 36 patients that received a low dose responded while in the high dose group 17 out of 32 responded.
+```{r Q2}
+quiz(
+  question("What is the probability of responding in the low dose group?",
+    answer("Less than 40%"),
+    answer("Between 40% and 60%"),
+    answer("Between 60% and 80%", correct=TRUE),
+    answer("More than 80%"),
+        allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 3
+
+
+```{r Q3}
+quiz(
+  question("What are the odds of responding in the low dose group?",
+    answer("Less than 0.5"),
+    answer("Between 0.5 and 1"),
+    answer("Between 1 and 2"),
+    answer("More than 2", correct=TRUE),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 4
+
+
+```{r Q4}
+quiz(
+  question("What is the odds ratio of the low dose vs the high dose?",
+    answer("Less than 0.5"),
+    answer("Between 0.5 and 1"),
+    answer("Between 1 and 2"),
+    answer("More than 2", correct=TRUE),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 5
+
+```{r Q5}
+quiz(
+  question("What is the standard error of the log odds ratio of the dose?",
+    answer("approximately 0.5"),
+    answer("approximately 1", correct=TRUE),
+    answer("approximately 1.5"),
+    answer("approximately 2"),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 6
+
+```{r Q6}
+quiz(
+  question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
+    answer("smaller than 0.5"),
+    answer("between 0.5 and 1"),
+    answer("between 1 and 1.5", correct=TRUE),
+    answer("between 1.5 and 2"),
+    answer("larger than 2"),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+## Exercises (p1)
+
+In this exercise we analyze the fracture data with logistic regression in R. This is a study concerning neurological deficit in thoracolumbar burst fractures. Between January 1981 and January 1991, 139 patients with thora-columbar or lumbar burst fractures were treated in the Department of Orthopaedics and the Department of Neurosurgery of the Academic Hospital Dijkzigt of the Erasmus University of Rotterdam (Fontijne WPJ et al., J.of Bone & Joint Surgery, in press).
+A.o., the following variables were observed:
+
+
+- `ID`: Subject number
+
+- `DEF`: the occurrence of neurological deficit ('yes' or 'no')
+
+- `LOC`: the localization of the fracture ('lumbar', 'thoracolumbar' or 'thoracic') 
+
+- `STEN`: percentage spinal canal stenosis
+
+
+f.	Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
+
+g.	Next switch to the 'Deviation coding' contrast for LOC instead by running the command:
+ contrasts(fracture$LOC) <- contr.sum(3)
+In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2.
+Fit the model using this coding and compare the estimated coefficients again.
+
+h.	What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%?
+
+
+i.	Create a scatter plot which shows how the predicted probability of deficit  depends on the localization and the percentage stenosis..
+
+
+We will examine the effect of localization. This variable is actually an ordinal variable. It seems sensible to apply a trend test. This can be performed by including LOC as a continuous variable in the model.
+
+j.	Fit a logistic model with LOC now as continuous variable (hint: use as.numeric) call this model glmNum.
+What can you conclude now?
+How is this related to what you have found in a.?
+
+k.	Using the plot function on the fitted model gives you a number of diagnostic plots. Try to interpret the plots. 
+
+
+l.	The functions cooks.distance and dfbetas gives you the cooks.distances and the dfbetas of the observations. Use:
+ coo_1 <- cooks.distance(glmNum)
+And try to find the patients with large value for Cook’s Leverage.
+You may also sort the cases by the variable (in descending order) and print the cases with a high value. 
+head(fracture[order(coo_1,decreasing = TRUE),], 10)
+
+
+
+### Question 1
+
+
+Display a couple of records from the data set to see what it looks like. You could use the `head` function. Make a cross table of the relation between the location of the fracture and the occurrence of neurological deficit. Is this relation significant?
+
+```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+
+
+```
+
+```{r P1-hint-1, eval=FALSE}
+# You could use the following functions
+head(__)
+tab3a <- table(__,__)
+prop.table(___, ___)
+chisq.test(___)
+```
+```{r P1-hint-2}
+# Use:
+head(fracture)
+(tab3a <- table(fracture$LOC, fracture$DEF,deparse.level = 2))
+prop.table(tab3a, margin = 1)   # columnwise perc
+chisq.test(tab3a) # seems there is no relationship
+
+```
+
+### Question 2
+
+
+Next look at the relationship between percentage stenosis and localization, describe and test it. How can you test which groups are significant different? 
+
+```{r P2-setup}
+
+```
+
+```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+# To describe the relation you can visualise it. For example by a boxplot. The 
+# syntax is boxplot(outcome~group, data= dataset)
+# Now estimate a logistic regression model using glm
+# remember that the coef and confint can be used to get 
+# the coefficients and their confidence intervals
+# drop1 can be used to perform LR tests for all coefficients
+
+```
+
+```{r P2-hint-1}
+
+
+```
+```{r P2-hint-2}
+# The code is:
+boxplot(STEN~DEF, data=fracture)
+# estimate the relationship using LOGISTIC regression
+glm3b<-glm(DEF~STEN, family=binomial, data=fracture)
+# Describe model by OR and CI
+exp(coef(glm3b)) 
+exp(confint(glm3b))
+# test using a LR test
+drop1(glm3b, test = 'LRT')  # very significant
+
+# or do ttest
+t.test(STEN~ DEF, data=fracture, var.equal = FALSE)
+# also very significant
+
+```
+
+### Question 3
+
+Next look at the relationship between percentage stenosis and localization, describe and test it. How can you test which groups are significant different?
+
+```{r P3-setup}
+
+```
+
+```{r P3, exercise=TRUE, exercise.lines = 10}
+
+```
+
+```{r P3-hint-1, eval=FALSE}
+# perform anova using lm
+lm3c<-lm(___~ ___, data=fracture)
+anova(___)
+summary(___)
+
+```
+
+
+```{r P3-hint-2}
+# The code is:
+lm33<-lm(STEN~ LOC, data=fracture)
+anova(lm33)
+summary(lm33)
+# better apply a bonferroni correction !!!
+```
+
+### Question 4
+
+Now we will use logistic regression to examine the effect of percentage stenosis and localization on the probability of neurological deficit simultaneously.	Specify a model with the covariates LOC, STEN and the interaction between these two. Is it justified to fit a model without the interaction term?
+
+
+```{r P4, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+drop1(___, test=___)
+
+```
+
+```{r P4-hint-1}
+# Estimate a logistic regression model using glm
+# use the drop1 or anova functions to perform a LR test 
+```
+
+```{r P4-hint-2}
+# The code is:
+glm34 <-glm(DEF~LOC*STEN,data=fracture, family = binomial)
+summary(glm34)
+exp(coef(glm34))
+exp(confint(glm34))
+# Lets see if we need interaction
+drop1(glm34, test='LRT')
+# OR
+glm340 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
+anova(glm34, glm340, test='LRT')
+
+```
+
+
+### Question 5
+
+Now fit a logistic model without the interaction term. Save the predicted probabilities. We will use this variable later.
+Looking at the results answer the following questions:
+-	Does the percentage stenosis have a significant effect on neurological deficit, adjusted for localization? Describe the estimated effect.
+-	Is localization significantly associated with the probability of neurological deficit (adjusted for percentage stenosis)? What is the P-value?
+-	What are the odds ratios of the localization categories thoracic and thoracolumbar versus lumbar?
+```{r P5-setup}
+
+```
+
+```{r P5, exercise=TRUE, exercise.lines = 10}
+
+
+```
+
+```{r P5-hint-1}
+
+```
+
+```{r P5-hint-2}
+# The code is:
+glm35 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
+summary(glm35)
+exp(coef(glm35)) 
+exp(confint(glm35))
+drop1(glm35, test='LRT')
+# STENOSIS is significant 
+# odds increase by 3% for each unit increase
+# Location is not significant
+# save predicted
+preds <- predict(glm35,type = 'response')
+
+```
+
+### Question 6
+
+Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
+
+```{r P6-setup}
+```
+
+```{r P6, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+```
+
+```{r P6-hint-1}
+# Fill in the name of the model
+
+```
+
+```{r P6-hint-2}
+# The code is:
+```
+
+### Question 7
+
+Next switch to the 'Deviation coding' contrast for LOC instead by running the command:
+ contrasts(fracture$LOC) <- contr.sum(3)
+In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2.
+Fit the model using this coding and compare the estimated coefficients again.
+```{r P7-setup}
+
+```
+
+```{r P7, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+```
+
+```{r P7-hint-1}
+# Fill in the response and the quadratic term as specified above
+```
+
+```{r P7-hint-2}
+# The code is:
+
+```
+
+
+
+### Question 8
+
+What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%?
+
+```{r P8-setup}
+
+```
+
+```{r P8, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+
+```
+
+```{r P8-hint-1}
+# Use the glm function as before
+```
+
+```{r P8-hint-2}
+# The code is:
+```
+
+### Question 9
+
+The functions cooks.distance and dfbetas gives you the cooks.distances and the dfbetas of the observations. Use:
+ coo_1 <- cooks.distance(glmNum)
+And try to find the patients with large value for Cook’s Leverage.
+You may also sort the cases by the variable (in descending order) and print the cases with a high value. 
+head(fracture[order(coo_1,decreasing = TRUE),], 10)
+
+```{r P9-setup}
+
+```
+
+```{r P9, exercise=TRUE, exercise.lines = 12, eval=FALSE}
+
+```
+
+```{r P9-hint-1}
+# Fill in the blanks
+```
+
+```{r P9-hint-2}
+# The code is:
+
+```

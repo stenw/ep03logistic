@@ -23,12 +23,12 @@ The following questions test your knowledge about logistic regression, odds and 
 quiz(
   question("True or false (check all that apply)", 
     type='multiple',         
-    answer("The confidence interval around an odds ratio is symetric"),
-    answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios"),
+    answer("In regression an outlier is a value with an unsual value of the dependent variable given the independent  variables", correct=TRUE),
+    answer("Observations with high leverage have (an) unusual independant variable.", correct=TRUE ),
     answer("An odds of one correspons to a probability of 50%", correct=TRUE),
-    answer("When a probability is one, the corresponding odds are infinite", correct=TRUE),
-    answer("The logistic function cannot reach values larger than one", correct=TRUE),
-    answer("The logit function can be used to convert probabilities to odds ", correct=TRUE),
+    answer("The deviance is a measure of leverage"),
+    answer("Cook's distance says something about how influencial an observation is", correct=TRUE),
+    answer("The dfbetas say something about how influencial an observation is", correct=TRUE),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -294,11 +294,8 @@ Looking at the results answer the following questions:
 
 ```
 
+
 ```{r P5-hint-1}
-
-```
-
-```{r P5-hint-2}
 # The code is:
 glm35 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
 summary(glm35)
@@ -315,27 +312,45 @@ preds <- predict(glm35,type = 'response')
 
 ### Question 6
 
-Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
+Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. In `glm` we can do this by including `c(LOC, base=3)` as a model term (3 because thoracic is the third level of this variable which you can check using the `levels` function). Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
 
 ```{r P6-setup}
 ```
 
 ```{r P6, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+glm36<- glm(~ C(LOC, base=3) + ___, ____)
+exp(coef(glm36))
+
 ```
 
 ```{r P6-hint-1}
-# Fill in the name of the model
+
+# Write down the equation of the model
+# We know the how do the log odds change when we go change between the levels of 
+# LOC. So how would they change if we go from thoracic to the other levels.
+# knowing delta log odds allows us to compute the OR
 
 ```
 
 ```{r P6-hint-2}
+# When LOC(thoracic) will be reference:
+#  Constant: -1.373 - 1.307 = -2.680
+# LOC(1) : lumbar/thracic = +1.307
+# LOC(2) : thoracolumbar/thoracic = -0.353 - (-1.307) = 0.954
+# Now take the exp
 # The code is:
+levels(fracture$LOC) # 3rd level is thoracic
+
+glm36 <-glm(DEF~C(LOC, base=3)+STEN,data=fracture, family = binomial)
+glm36
+exp(coef(glm36))
+
 ```
 
 ### Question 7
 
 Next switch to the 'Deviation coding' contrast for LOC instead by running the command:
- contrasts(fracture$LOC) <- contr.sum(3)
+ `contrasts(fracture$LOC) <- contr.sum(3)` 
 In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2.
 Fit the model using this coding and compare the estimated coefficients again.
 ```{r P7-setup}
@@ -345,12 +360,28 @@ Fit the model using this coding and compare the estimated coefficients again.
 ```{r P7, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 ```
 
-```{r P7-hint-1}
-# Fill in the response and the quadratic term as specified above
+```{r P7-hint-1, eval=FALSE}
+# Use the following template
+contrastsbase<- contrasts(___)
+contrasts(____ <- contr.sum(___)
+glm37 <-glm(___)
+glm37
+exp(coef(glm37))
+# restore contrast
+contrasts(____)<-contrastsbase
+
+
 ```
 
 ```{r P7-hint-2}
 # The code is:
+contrastsbase<- contrasts(fracture$LOC)
+contrasts(fracture$LOC) <- contr.sum(3)
+glm37 <-glm(DEF~C(LOC, base=3)+STEN,data=fracture, family = binomial)
+glm37
+exp(coef(glm37))
+# restore contrast
+contrasts(fracture$LOC)<-contrastsbase
 
 ```
 
@@ -358,10 +389,11 @@ Fit the model using this coding and compare the estimated coefficients again.
 
 ### Question 8
 
-What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%?
+What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%? (Using the moel from Ex 5.)
 
 ```{r P8-setup}
-
+glm37 <-glm(DEF~C(LOC, base=3)+STEN,data=fracture, family = binomial)
+glm35 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
 ```
 
 ```{r P8, exercise=TRUE, exercise.lines = 10, eval=FALSE}
@@ -369,17 +401,27 @@ What is the predicted probability of neurological deficit for a patient with a t
 ```
 
 ```{r P8-hint-1}
-# Use the glm function as before
+# Use the predict function
 ```
 
 ```{r P8-hint-2}
+# We can make a dataset for prediction with
+preddata<-data.frame(LOC=factor('thoracic', levels = levels(fracture$LOC)), STEN=60)
+
+```
+
+
+```{r P8-hint-3}
 # The code is:
+preddata<-data.frame(LOC=factor('thoracic', levels = levels(fracture$LOC)), STEN=60)
+predict(glm35, newdata = preddata, type='response' )
+
 ```
 
 ### Question 9
 
 The functions cooks.distance and dfbetas gives you the cooks.distances and the dfbetas of the observations. Use:
- coo_1 <- cooks.distance(glmNum)
+` coo_1 <- cooks.distance(glm35)`
 And try to find the patients with large value for Cook’s Leverage.
 You may also sort the cases by the variable (in descending order) and print the cases with a high value. 
 head(fracture[order(coo_1,decreasing = TRUE),], 10)
@@ -393,10 +435,13 @@ head(fracture[order(coo_1,decreasing = TRUE),], 10)
 ```
 
 ```{r P9-hint-1}
-# Fill in the blanks
+# use the code as isn the question
 ```
 
 ```{r P9-hint-2}
 # The code is:
+diagnost3<- data.frame(hat=hatvalues(glm35),dfbetas(glm35), cook=cooks.distance(glm35), fracture$ID)
+head(diagnost3[order(diagnost3$cook,decreasing = TRUE),], 10)
+
 
 ```

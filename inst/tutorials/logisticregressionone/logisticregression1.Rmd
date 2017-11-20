@@ -3,6 +3,9 @@ title: "Logistic regression 1"
 output: 
   learnr::tutorial:
      allow_skip: true
+tutorial:
+  id: "io.shinyapps.erasmusmc.logisticregression1"
+  version: 0.921
 runtime: shiny_prerendered
 ---
 
@@ -35,9 +38,23 @@ quiz(
 ```
 
 ### Question 2
+```{r Q2}
+quiz(
+  question("True or false (check all that apply)", 
+    type='multiple',         
+    answer("The logistic regression model can only be used with continuous independant variables"),
+    answer("The logistic regression model can only be used with continuous dependant variables"),
+    answer("The logistic regression model can only be used with binary independant variables"),
+    answer("The logistic regression model can only be used with binary dependant variables", correct=TRUE),
+        allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 3
 
 In Clements et. al. (1999) the effect of a high dose vs a low dose of D-Penicillamine in early diffuse systemic scleloris is investigated. 25 of the 36 patients that received a low dose responded while in the high dose group 17 out of 32 responded.
-```{r Q2}
+```{r Q3}
 quiz(
   question("What is the probability of responding in the low dose group?",
     answer("Less than 40%"),
@@ -49,10 +66,10 @@ quiz(
 )
 ```
 
-### Question 3
+### Question 4
 
 
-```{r Q3}
+```{r Q4}
 quiz(
   question("What are the odds of responding in the low dose group?",
     answer("Less than 0.5"),
@@ -64,10 +81,10 @@ quiz(
 )
 ```
 
-### Question 4
+### Question 5
 
 
-```{r Q4}
+```{r Q5}
 quiz(
   question("What is the odds ratio of the low dose vs the high dose?",
     answer("Less than 0.5"),
@@ -79,9 +96,9 @@ quiz(
 )
 ```
 
-### Question 5
+### Question 6
 
-```{r Q5}
+```{r Q6}
 quiz(
   question("What is the standard error of the log odds ratio of the dose?",
     answer("approximately 0.5"),
@@ -93,9 +110,9 @@ quiz(
 )
 ```
 
-### Question 6
+### Question 7
 
-```{r Q6}
+```{r Q7}
 quiz(
   question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
     answer("smaller than 0.5"),

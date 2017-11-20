@@ -19,3 +19,6 @@ A list with the test statistic and p value of the test
 \description{
 Hosmer lemeshaw goodness of fit test
 }
+\examples{
+TODO
+}

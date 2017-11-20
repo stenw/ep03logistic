@@ -3,6 +3,9 @@ title: "Logistic regression 1"
 output: 
   learnr::tutorial:
      allow_skip: true
+tutorial:
+  id: "io.shinyapps.erasmusmc.logisticregression1"
+  version: 0.922
 runtime: shiny_prerendered
 ---
 
@@ -35,9 +38,23 @@ quiz(
 ```
 
 ### Question 2
+```{r Q2}
+quiz(
+  question("True or false (check all that apply)", 
+    type='multiple',         
+    answer("The logistic regression model can only be used with continuous independant variables"),
+    answer("The logistic regression model can only be used with continuous dependant variables"),
+    answer("The logistic regression model can only be used with binary independant variables"),
+    answer("The logistic regression model can only be used with binary dependant variables", correct=TRUE),
+        allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+### Question 3
 
 In Clements et. al. (1999) the effect of a high dose vs a low dose of D-Penicillamine in early diffuse systemic scleloris is investigated. 25 of the 36 patients that received a low dose responded while in the high dose group 17 out of 32 responded.
-```{r Q2}
+```{r Q3}
 quiz(
   question("What is the probability of responding in the low dose group?",
     answer("Less than 40%"),
@@ -49,10 +66,10 @@ quiz(
 )
 ```
 
-### Question 3
+### Question 4
 
 
-```{r Q3}
+```{r Q4}
 quiz(
   question("What are the odds of responding in the low dose group?",
     answer("Less than 0.5"),
@@ -64,10 +81,10 @@ quiz(
 )
 ```
 
-### Question 4
+### Question 5
 
 
-```{r Q4}
+```{r Q5}
 quiz(
   question("What is the odds ratio of the low dose vs the high dose?",
     answer("Less than 0.5"),
@@ -79,9 +96,9 @@ quiz(
 )
 ```
 
-### Question 5
+### Question 6
 
-```{r Q5}
+```{r Q6}
 quiz(
   question("What is the standard error of the log odds ratio of the dose?",
     answer("approximately 0.5"),
@@ -93,9 +110,9 @@ quiz(
 )
 ```
 
-### Question 6
+### Question 7
 
-```{r Q6}
+```{r Q7}
 quiz(
   question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
     answer("smaller than 0.5"),
@@ -123,7 +140,7 @@ b.	Make a cross table of the outcome agvhd against sexmatch using the table func
 Is there a significant relation between this variables?
 Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. 
 
-```{r P1, exercise=TRUE, exercise.lines = 10}
+```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 (tab1b <- table(bmt$agvhd, bmt$sexmatch, deparse.level = 2))
 prop.table(____, margin = 2)   
@@ -153,7 +170,7 @@ In R we can estimate a logistic regression model using the command `glm()`The fi
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 ```
 
-```{r P2, exercise=TRUE, exercise.lines = 10}
+```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 glm1<-glm(___ ~ ____, family = ____, data=___)
 glm1
 ```
@@ -210,7 +227,7 @@ glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
 
 ```
 
-```{r P4, exercise=TRUE, exercise.lines = 10}
+```{r P4, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 drop1(___, test=___)
 
 ```
@@ -261,7 +278,7 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
 ```
 
-```{r P6, exercise=TRUE, exercise.lines = 10}
+```{r P6, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 y <- predict(____, type = ____)
 
 plot(x=bmt$agedon[order(bmt$agedon)],  
@@ -289,7 +306,7 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
 ```
 
-```{r P7, exercise=TRUE, exercise.lines = 10}
+```{r P7, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 glmAge2<-glm(____ ~ agedon+___, _____)
 anova(glmAge2, glmAge, test='LRT')
 ```
@@ -318,7 +335,7 @@ glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
 
 ```
 
-```{r P8, exercise=TRUE, exercise.lines = 10}
+```{r P8, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 glmMV <-
 
 ```
@@ -345,7 +362,7 @@ glmMV<-glm(agvhd ~ agedon+I(agedon^2)+agerec+sexmatch+diag, family = 'binomial',
 
 ```
 
-```{r P9, exercise=TRUE, exercise.lines = 12}
+```{r P9, exercise=TRUE, exercise.lines = 12, eval=FALSE}
 predict_data <- expand.grid(agedon=0:60,
            diag='acute nonlymphoblastic leukemia', 
            sexdon=levels(bmt$sexdon),

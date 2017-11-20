@@ -111,7 +111,7 @@ more than two years).
 
 First we recode the outcome as 0/1. We call this variable OUT. Estimate a conditional logistic regression model to investigate the effect of history of oestrogen use on endometrial cancer  using `clogit` cll the fiited model `fit1`. Interpret the results using `summary`.
 
-```{r P1, exercise=TRUE, exercise.lines = 10}
+```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 endom$OUT<-endom$OUTCOME=='case'
 fit1 <- clogit(___ ~ ___ + strata(___), data=___)
 summary(___)
@@ -138,7 +138,7 @@ Because the patients are matched on age we cannot put the main effect of this va
 fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
 ```
 
-```{r P2, exercise=TRUE, exercise.lines = 10}
+```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 endom$ESTAGEC <- ifelse(endom$EST=='yes', endom$AGEC, 0)
 fit2 <- clogit(___)
 summary(___)

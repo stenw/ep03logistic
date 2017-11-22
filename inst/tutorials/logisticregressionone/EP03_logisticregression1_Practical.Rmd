@@ -5,7 +5,7 @@ output:
      allow_skip: true
 tutorial:
   id: "io.shinyapps.erasmusmc.logisticregression1"
-  version: 0.922
+  version: 0.923
 runtime: shiny_prerendered
 ---
 
@@ -28,7 +28,7 @@ quiz(
     type='multiple',         
     answer("The confidence interval around an odds ratio is symetric"),
     answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios"),
-    answer("An odds of one correspons to a probability of 50%", correct=TRUE),
+    answer("An odds of one corresponds to a probability of 50%", correct=TRUE),
     answer("When a probability is one, the corresponding odds are infinite", correct=TRUE),
     answer("The logistic function cannot reach values larger than one", correct=TRUE),
     answer("The logit function can be used to convert probabilities to odds ", correct=TRUE),
@@ -42,10 +42,10 @@ quiz(
 quiz(
   question("True or false (check all that apply)", 
     type='multiple',         
-    answer("The logistic regression model can only be used with continuous independant variables"),
-    answer("The logistic regression model can only be used with continuous dependant variables"),
-    answer("The logistic regression model can only be used with binary independant variables"),
-    answer("The logistic regression model can only be used with binary dependant variables", correct=TRUE),
+    answer("The logistic regression model can only be used with continuous independent variables"),
+    answer("The logistic regression model can only be used with continuous dependent variables"),
+    answer("The logistic regression model can only be used with binary independent variables"),
+    answer("The logistic regression model can only be used with binary dependent variables", correct=TRUE),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -101,8 +101,8 @@ quiz(
 ```{r Q6}
 quiz(
   question("What is the standard error of the log odds ratio of the dose?",
-    answer("approximately 0.5"),
-    answer("approximately 1", correct=TRUE),
+    answer("approximately 0.5", correct=TRUE),
+    answer("approximately 1"),
     answer("approximately 1.5"),
     answer("approximately 2"),
     allow_retry = TRUE, random_answer_order = FALSE
@@ -133,9 +133,8 @@ We will now examine how logistic regression can be used to investigate the risk 
 
 ### Question 1
 Define a new variable sexmatch with value 1 if the receiver and donor have the same sex and value 0 if not. In R you can do this using:
-library(foreign)
-When reading in the SPSS file the file path between the quotes should correspond the location where the file is stored on your computer. R will give you a warning (as is frequently the case when importing SPSS files). In these exercises you can ignore this type of warning. 
-b.	Make a cross table of the outcome agvhd against sexmatch using the table function. Add the proportions of healthy and deseased with the prop.table function. Use chisq.test to perform a 2-test.
+`bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)`
+Make a cross table of the outcome agvhd against sexmatch using the table function. Add the proportions of healthy and deseased with the prop.table function. Use chisq.test to perform a chi2-test.
 
 Is there a significant relation between this variables?
 Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. 
@@ -153,6 +152,7 @@ chisq.test(____)
 ```
 ```{r P1-hint-2}
 # Use:
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 (tab1b <- table(bmt$agvhd, bmt$sexmatch,deparse.level = 2))
 prop.table(tab1b, margin = 2)   
 chisq.test(tab1b)

@@ -69,7 +69,7 @@ quiz(
     answer("Between 0.3 and 0.6%"),
     answer("Between 0.6 and 1.5"),
     answer("Between 1.5 and 3", correct=TRUE),
-    answer("More than 3", correct=TRUE),
+    answer("More than 3", correct=FALSE),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -455,9 +455,22 @@ glm35 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
 
 ```{r P9-hint-2}
 # The code is:
-diagnost3<- data.frame(hat=hatvalues(glm35),dfbetas(glm35), cook=cooks.distance(glm35), fracture$ID)
+diagnost3<- data.frame(rstudent(glm35), hat=hatvalues(glm35),dfbetas(glm35), cook=cooks.distance(glm35), fracture$ID)
 head(diagnost3[order(diagnost3$cook,decreasing = TRUE),], 10)
+par(mfrow=c(2,2))
+plot(glm35)
+# of interest is mainly the last plot 
 
+
+# All seems reasonable:
+# there is one observation (1) with a high value for cooks diagnostic (the pearson residual is quite high). 
+# There is also a value for which the hat value is quite large (46-the combination of LOC=LUMBAR and STEN as high as 70 is unsusual)
+# For some other observations Cooks diagnostic and the dffit is also a bit high
+
+
+#
+# another usefull function is:
+# influence.measures(glm35)
 
 ```
 

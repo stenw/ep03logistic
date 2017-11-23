@@ -31,8 +31,8 @@ quiz(
     answer("Observations with high leverage have (an) unusual independant variable.", correct=TRUE ),
     answer("An odds of one correspons to a probability of 50%", correct=TRUE),
     answer("The deviance is a measure of leverage"),
-    answer("Cook's distance says something about how influencial an observation is", correct=TRUE),
-    answer("The dfbetas say something about how influencial an observation is", correct=TRUE),
+    answer("Cook's distance says something about how influential an observation is", correct=TRUE),
+    answer("The dfbetas say something about how influential an observation is is", correct=TRUE),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -93,13 +93,12 @@ is fitted. Study the provided output. Which of the following statements is true?
 
 ### Question 3
 
--2 Log likelihood 2839.873
 
 ```{r Q3}
 quiz(
   question("Which of the following statements is true? (check all that apply)",
     answer("Age and sex are strong confounders"),
-    answer("Gender, age and age squared are jointly significant  (p<0.05)"),
+    answer("Gender, age and age squared are jointly significant  (p<0.05)", correct=TRUE),
     answer("The probability of having an adverse event is highest for people that are approximately 50 years old (if other variables are constant)", correct=TRUE),
     answer("The upper bound of the odds ratio of gender is approximately 1.9", correct=TRUE),
     allow_retry = TRUE, random_answer_order = FALSE
@@ -137,34 +136,6 @@ A.o., the following variables were observed:
 
 - `STEN`: percentage spinal canal stenosis
 
-
-f.	Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
-
-g.	Next switch to the 'Deviation coding' contrast for LOC instead by running the command:
- contrasts(fracture$LOC) <- contr.sum(3)
-In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2.
-Fit the model using this coding and compare the estimated coefficients again.
-
-h.	What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%?
-
-
-i.	Create a scatter plot which shows how the predicted probability of deficit  depends on the localization and the percentage stenosis..
-
-
-We will examine the effect of localization. This variable is actually an ordinal variable. It seems sensible to apply a trend test. This can be performed by including LOC as a continuous variable in the model.
-
-j.	Fit a logistic model with LOC now as continuous variable (hint: use as.numeric) call this model glmNum.
-What can you conclude now?
-How is this related to what you have found in a.?
-
-k.	Using the plot function on the fitted model gives you a number of diagnostic plots. Try to interpret the plots. 
-
-
-l.	The functions cooks.distance and dfbetas gives you the cooks.distances and the dfbetas of the observations. Use:
- coo_1 <- cooks.distance(glmNum)
-And try to find the patients with large value for Cook’s Leverage.
-You may also sort the cases by the variable (in descending order) and print the cases with a high value. 
-head(fracture[order(coo_1,decreasing = TRUE),], 10)
 
 
 

@@ -9,8 +9,9 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library("learnr")
 library('survival')
+library('Matrix')
 library('EP03logistic')
-data("endom", package = "EP03logistic")
+#data("endom", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -21,7 +22,7 @@ The following questions test your knowledge about conditional logistic regressio
 
 ### Question 1
 
-When we have matched case-control data we cannot use (unconditional) logistic regression:
+When we have case-control data we cannot use (unconditional) logistic regression:
 ```{r Q1}
 quiz(
   question("True or false?",
@@ -109,7 +110,7 @@ more than two years).
 
 ### Question 1
 
-First we recode the outcome as 0/1. We call this variable OUT. Estimate a conditional logistic regression model to investigate the effect of history of oestrogen use on endometrial cancer  using `clogit` cll the fiited model `fit1`. Interpret the results using `summary`.
+First make sure the response is coded as 0/1. Estimate a conditional logistic regression model to investigate the effect of history of oestrogen use on endometrial cancer  using `clogit` cll the fiited model `fit1`. Interpret the results using `summary`.
 
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 endom$OUT<-endom$OUTCOME=='case'
@@ -125,7 +126,8 @@ summary(___)
 ```
 ```{r P1-hint-2}
 # Use:
-fit1 <- clogit(OUT ~ END + strata(STRATUM), data=endom)
+endom$OUT<-endom$OUTCOME=='case'
+fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
 summary(fit1)
 ```
 
@@ -204,13 +206,23 @@ Now we also want to look at oestrogen use and dose. However these variables are 
 individuals. This can be done using the complete.cases() function.
 Add the variables one by one and perform the chi2 test.
 
-
-```{r P5, exercise=TRUE, exercise.lines = 10}
+```{r P5-setup}
 
 ```
 
-```{r P5-hint-1}
+```{r P5, exercise=TRUE, exercise.lines = 12}
 
+```
+
+```{r P5-hint-1, eval=FALSE}
+cc<-complete.cases(endom$DOS)
+fit4 <- clogit(__, data=endom[cc,])
+fit5 <- clogit(___  +DOS, ___, data=endom[cc,])
 ```
 ```{r P5-hint-2}
+cc<-complete.cases(endom$DOS)
+fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom[cc,])
+fit5<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+DOS+ strata(STRATUM), data=endom[cc,])
+anova(fit4, fit5, test='LRT')
+# same for oestrogen
 ```

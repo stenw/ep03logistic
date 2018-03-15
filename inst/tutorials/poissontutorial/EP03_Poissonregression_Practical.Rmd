@@ -114,9 +114,9 @@ The table below presents dose-response data concerning the relationship between 
 Confirm that the number of person years and the number of events in the data set `doll`. For this we need to weight the data. 
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 w1 <- rep((1:NROW(doll)),doll$prsyears)
-with(doll[w1,], table(___, ___))
-w2 <-
-with(____)  
+with(doll[w1,], table(smoke,age))
+w2 <- rep((1:NROW(doll)),doll$death)
+with(doll[w2,], table(smoke,age))  
 
 ```
 ```{r P1-hint-1}
@@ -141,9 +141,9 @@ Estimate a poisson model using only an intercept. Call the model glm1 What is th
 
 
 ```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
-doll$logpy <- log(___)
-glm1<-glm(___~1+offset(____),  family=poisson, data=doll)
-summary(___)
+doll$logpy <- log(doll$prsyears)
+glm1<-glm(death~1+offset(logpy),  family=poisson, data=doll)
+summary(glm1)
 ```
 
 ```{r P2-hint-1}
@@ -193,15 +193,17 @@ glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
 
 ```{r P4-hint-2}
 # The code is:
-glm3 <- glm(death~1+age+smoke+offset(logpy),  family=poisson, data=doll)
+glm3 <- glm(death~1+as.factor(age)+smoke+offset(logpy),  family=poisson, data=doll)
 summary(glm3)
-anova(fit4, fit3)
+anova(glm3, glm2, test = 'LRT')
 ```
 
 ### Question 5
 Now we check if the effect of age can be better modlled by a linear trend. Use `as.numeric' to convert the factor to a numeric value. Call the model glm4. Does this model do better than the previous model (use a likelihood ratio test)?
 
 ```{r P5, exercise=TRUE, exercise.lines = 10}
+
+
 
 ```
 
@@ -219,13 +221,14 @@ glm3 <- glm(death~1+age+smoke+offset(logpy),  family=poisson, data=doll)
 ```
 ```{r P5-hint-2}
 # the code is
-glm4 <- glm(death~1+as.numeric(age)+smoke+offset(logpy),  family=poisson, data=doll)
-anova(glm3, glm4,test = 'LRT')
+doll$numage <- as.numeric(doll$age)
+glm4 <- glm(death~1+numage+smoke+offset(logpy),  family=poisson, data=doll)
+anova(glm4, glm3,test = 'LRT')
 ```
 
 
 ### Question 6
-Now use  `log(as.numeric(age))` to moel the effect of age. What about the goodness-of-fit? Does this do better than the previous model?
+Now use  `log(as.numeric(age))` to model the effect of age. What about the goodness-of-fit? Does this do better than the previous model?
 
 ```{r P6, exercise=TRUE, exercise.lines = 10}
 
@@ -245,6 +248,7 @@ glm4 <- glm(death~1+as.numeric(age)+smoke+offset(logpy),  family=poisson, data=d
 ```
 ```{r P6-hint-2}
 # the code is
-glm5 <- glm(death~1+I(log(as.numeric(age)))+smoke+offset(logpy),  family=poisson, data=doll)
+glm5 <- glm(death~1+I(log(numage))+smoke+offset(logpy),  family=poisson, data=doll)
+
 AIC(glm1, glm2, glm3, glm4, glm5)
 ```

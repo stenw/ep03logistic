@@ -1,6 +1,6 @@
 ---
 title: "Logistic regression 2"
-
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-
+It is advisable to do the online version op this excercise at <https://emcbiostatistics.shinyapps.io/EP03_Logisticregression2_Practical/>
 
 
 ## Exercises 
@@ -227,7 +227,7 @@ plot(glm35)
 
 ### Question 10
 
-Compute the area under the AUC curve for model `glm35` using the prediction and performance functions of the `ROCR` package.
+Compute the area under the AUC curve for model `glm35` using the prediction and performance functions of the `ROCR` package. (Hint: first store the predicted probabilities and use the `prediction()` function. Then use `performance()`)
 
 
 ```{r P10-setup, include=FALSE}

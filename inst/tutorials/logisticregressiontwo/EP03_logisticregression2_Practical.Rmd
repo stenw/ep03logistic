@@ -13,7 +13,7 @@ runtime: shiny_prerendered
 library("learnr")
 library(ROCR)
 library('EP03logistic')
-data("bmt", package = "EP03logistic")
+data("bmt", package = "EP 03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -442,7 +442,7 @@ plot(glm35)
 #
 # another usefull function is:
 # influence.measures(glm35)
-
+influence.measures(glm35)
 ```
 
 ### Question 10

@@ -1,4 +1,5 @@
 library(devtools)
+library(dplyr)
 
 bmt <- foreign::read.spss(file='./data-raw/bmt.sav', to.data.frame=TRUE)
 usethis::use_data(bmt, overwrite = TRUE)
@@ -25,3 +26,29 @@ lung<-c(3035, 2552, 2704, 2554, 2014, 1655, 1721, 1524, 1596, 2074, 2199, 2512,
 matrix(lung, 12)
 lung_data <- data.frame(Y=lung, month=rep(1:12,6), year=rep(1974:1979, each=12))
 usethis::use_data(lung_data, overwrite = TRUE)
+pex <- foreign::read.spss('./data-raw/pex.sav', to.data.frame = TRUE)
+names(pex)
+pex <-
+pex %>% select(c("patnr1", "fysiothe", "leeftijd",
+                 "geslacht", "lengte", "gewicht", "bilaterale_klachten",
+                 "vr16pijn", "vr17pijn",
+                 "v4pijnr2",
+                 "v5pijni2", "v4pijnr3", "v5pijni3",
+                 "v4pijnr4", "v5pijni4", "v4pijnr5", "v5pijni5",
+                 "v4pijnr6", "v5pijni6",
+                 "recov2", "recov3", "recov4", "recov5", "recov6")) %>%
+  rename(age=leeftijd, sex=geslacht, painrestbl=vr16pijn, painactbl=vr17pijn,
+         height=lengte, weight=gewicht, bilateral_complaints=bilaterale_klachten,
+         painrest6w=v4pijnr2, painact6w=v5pijni2,
+         painrest3m=v4pijnr3, painact3m=v5pijni3,
+         painrest6m=v4pijnr4, painact6m=v5pijni4,
+         painrest9m=v4pijnr5, painact9w=v5pijni5,
+         painrest12m=v4pijnr6, painact12m=v5pijni6,
+         recovery6w=recov2, recovery3m=recov3,
+         recovery6m=recov4, recovery9m=recov5,
+         recovery12m=recov6) %>%
+  mutate(fysiothe = recode(fysiothe, ja = "yes", nee='no'),
+         sex= recode(sex, man='male', vrouw='female'))
+usethis::use_data(pex, overwrite = TRUE)
+
+# saveRDS(pex, file='v:/HomeDir/959750/Onderwijs/ep03/logisticregression/data/pex.Rda')

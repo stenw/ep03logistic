@@ -57,4 +57,15 @@
 #' }
 #' @examples
 #' TODO
-"LBW"
+"fracture"
+
+
+#' Pex data
+#'
+#' @docType data
+#' @keywords datasets
+#' @name diamonds
+#' @usage data(pex)
+#' @format A data frame with info about 131 individuals
+#' @references Van Linschoten (2009) Supervised exercise therapy versus usual care for patellofemoral pain syndrome: an open label randomised controlled trial - \emph{BMJ}
+"pex"

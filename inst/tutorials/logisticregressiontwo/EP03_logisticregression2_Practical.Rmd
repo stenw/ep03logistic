@@ -4,7 +4,7 @@ output:
   learnr::tutorial:
      allow_skip: true
 tutorial:
-  id: "io.shinyapps.erasmusmc.logisticregression1"
+  id: "io.shinyapps.erasmusmc.logisticregression2"
   version: 0.922     
 runtime: shiny_prerendered
 ---
@@ -12,8 +12,10 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library("learnr")
 library(ROCR)
+library(Epi)
 library('EP03logistic')
-data("bmt", package = "EP 03logistic")
+library('DescTools')
+data("bmt", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -298,7 +300,7 @@ preds <- predict(glm35,type = 'response')
 
 ### Question 6
 
-Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. In `glm` we can do this by including `c(LOC, base=3)` as a model term (3 because thoracic is the third level of this variable which you can check using the `levels` function). Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
+Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. In `glm` we can do this by including `c(LOC, base=3)` as a model term (3 because thoracic is the third level of this variable which you can check using the `levels` function). Before you run this model, try to find out what will be the estimates for the Constant and for the dummies. When you run the new model Check whether the estimates are as expected.
 
 ```{r P6-setup}
 ```
@@ -337,7 +339,7 @@ exp(coef(glm36))
 
 Next switch to the 'Deviation coding' contrast for LOC instead by running the command:
  `contrasts(fracture$LOC) <- contr.sum(3)` 
-In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2.
+In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2. 
 Fit the model using this coding and compare the estimated coefficients again.
 ```{r P7-setup}
 
@@ -408,7 +410,7 @@ predict(glm35, newdata = preddata, type='response' )
 
 The functions cooks.distance and dfbetas gives you the cooks.distances and the dfbetas of the observations. Use:
 ` coo_1 <- cooks.distance(glm35)`
-And try to find the patients with large value for Cook’s Leverage.
+And try to find the patients with large value for Cook's distance.
 You may also sort the cases by the variable (in descending order) and print the cases with a high value. 
 head(fracture[order(coo_1,decreasing = TRUE),], 10)
 
@@ -447,7 +449,7 @@ influence.measures(glm35)
 
 ### Question 10
 
-Compute the area under the AUC curve for model `glm35` using the prediction and performance functions of the `ROCR` package.
+Plot the area under the AUC curve for model `glm35` using the `ROC` function of the `Epi` package. Also compute Nagelkerke's R2 measure. For this you can use the `PseudoR2` function in the `DescTools` package. The packages `Epi` and `DescTools` are already loaded.
 
 
 ```{r P10-setup}
@@ -459,21 +461,19 @@ glm35 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
 ```
 
 ```{r P10-hint-1}
-# Using the ROCR library you first use the prediction function on the generated predictions
-# to make a prediction object. 
-# The auc can now be used to calculate the AUC by using the performance function on this object
-# with argument, measure='auc.
-# NB: the ROCR package is already loaded
+# The ROC functions needs the predicted values of the model and the true outcomes as inputs. See the course notes for details.
 ```
 
-```{r P10-hint-2}
-# The code is:
+```{r P10-hint-2, eval=FALSE}
+prob <- predict(___, ___)
+ROC(test = ___, stat = glm35$y)
+PseudoR2(____, which='Nagelkerke')
+```
+
+```{r P10-solution}
 prob <- predict(glm35, type='response')
-pred <- prediction(prob, fracture$DEF)
-perf<-performance(pred, 'tpr', 'fpr')
-(auc <- performance(pred, measure='auc'))
-
-
+ROC(test = prob, stat = glm35$y)
+PseudoR2(glm35, which='Nagelkerke')
 ```
 
 

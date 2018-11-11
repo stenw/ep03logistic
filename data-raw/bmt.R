@@ -54,3 +54,7 @@ pex %>% select(c("patnr1", "fysiothe", "leeftijd",
 usethis::use_data(pex, overwrite = TRUE)
 
 # saveRDS(pex, file='v:/HomeDir/959750/Onderwijs/ep03/logisticregression/data/pex.Rda')
+
+
+vaccination <- read.csv('./data-raw/vaccination.csv', header = TRUE)
+usethis::use_data(vaccination, overwrite = TRUE)

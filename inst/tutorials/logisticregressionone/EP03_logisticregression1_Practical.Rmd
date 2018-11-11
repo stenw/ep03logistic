@@ -26,8 +26,9 @@ The following questions test your knowledge about logistic regression, odds and 
 quiz(
   question("True or false (check all that apply)", 
     type='multiple',         
-    answer("The confidence interval around an odds ratio is symetric"),
-    answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios"),
+    answer("The confidence interval around an odds ratio is symetric",
+           message="The confidence inteval of the coefficients is symetric. However when transformed to odds ratios it no longer is."),
+    answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios", message="We need the antilog (exp) to transform the coefficients to odds ratios"),
     answer("An odds of one corresponds to a probability of 50%", correct=TRUE),
     answer("When a probability is one, the corresponding odds are infinite", correct=TRUE),
     answer("The logistic function cannot reach values larger than one", correct=TRUE),
@@ -61,7 +62,8 @@ quiz(
     answer("Between 40% and 60%"),
     answer("Between 60% and 80%", correct=TRUE),
     answer("More than 80%"),
-        allow_retry = TRUE, random_answer_order = FALSE
+        allow_retry = TRUE, random_answer_order = FALSE, 
+    incorrect="The probability can be computed by dividing the number of patients in the low dose group that responded by the total number of patients in this group."
   )
 )
 ```
@@ -76,7 +78,8 @@ quiz(
     answer("Between 0.5 and 1"),
     answer("Between 1 and 2"),
     answer("More than 2", correct=TRUE),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE,
+    incorrect="Divide the probability of responding by the probability of not responding or equivalently divide the number of responders by the number of non-responders"
   )
 )
 ```
@@ -91,7 +94,8 @@ quiz(
     answer("Between 0.5 and 1"),
     answer("Between 1 and 2"),
     answer("More than 2", correct=TRUE),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE,
+    incorrect="Use the formula (a/c)/(b/d) where a are the low dose responders, b the high dose responders, c the low dose non-responders and d the high dose non-responders."
   )
 )
 ```
@@ -105,7 +109,8 @@ quiz(
     answer("approximately 1"),
     answer("approximately 1.5"),
     answer("approximately 2"),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE,
+    incorrect="Use the formula sqrt(1/a+1/b+1/c+1/d) where a,b,c, and d are the numbers in the crosstabulation of dose and outcome"
   )
 )
 ```
@@ -114,27 +119,34 @@ quiz(
 
 ```{r Q7}
 quiz(
-  question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
+  question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low) (use a calculator when needed)",
     answer("smaller than 0.5"),
     answer("between 0.5 and 1"),
     answer("between 1 and 1.5", correct=TRUE),
     answer("between 1.5 and 2"),
     answer("larger than 2"),
     allow_retry = TRUE, random_answer_order = FALSE
+    incorrect="When you know the odds ratio and se of the log odds ratio you can compute a confidence interval. Note that we are interested in the effect of the hogh dose greoup relative to that of the low dose group"
   )
 )
 ```
 
 ## Exercises (p1)
 
-We will now examine how logistic regression can be used to investigate the risk of developing acute graft versus host disease after a bone marrow transplant. We will use the data set BMT.sav
-
-
-
+We will now examine how logistic regression can be used to investigate the risk of developing acute graft versus host disease after a bone marrow transplant. We will use the data set BMT.sav. In R you can import the data set using the commands:
+```{r, eval=FALSE}
+library(foreign)
+bmt <- read.spss("/path/to/file/BMT.sav", to.data.frame = TRUE)
+```
+When reading in the SPSS file the file path between the quotes should correspond the location where the file is stored on your computer. R will give you a warning (as is frequently the case when importing SPSS files). In these exercises you can ignore this type of warning. 
+Here (in the shiny app), we have allready loaded the bmt data.
 ### Question 1
-Define a new variable sexmatch with value 1 if the receiver and donor have the same sex and value 0 if not. In R you can do this using:
-`bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)`
-Make a cross table of the outcome agvhd against sexmatch using the table function. Add the proportions of healthy and deseased with the prop.table function. Use chisq.test to perform a chi2-test.
+
+a) Define a new variable sexmatch with value 1 if the receiver and donor have the same sex and value 0 if not. In R you can do this using:
+```{r, eval=FALSE}
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+```
+b.	Make a cross table of the outcome agvhd against sexmatch using the table function. Add the proportions of healthy and deseased with the prop.table function. Use chisq.test to perform a chi2-test.
 
 Is there a significant relation between this variables?
 Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. 
@@ -148,7 +160,7 @@ chisq.test(____)
 ```
 
 ```{r P1-hint-1}
-# Just fill in the blanks
+# Just fill in the blanks. Also see the R code at the end of the chapter 'Probabilities and Odds'
 ```
 ```{r P1-hint-2}
 # Use:
@@ -160,11 +172,25 @@ chisq.test(tab1b)
 ```
 
 ### Question 2
+Use R as a calculator to calculate the odds ratio from the crosstabulation table.
+
+```{r P15, exercise=TRUE, exercise.lines = 10}
+
+
+```
+
+```{r P15-hit-1, exercise=TRUE, exercise.lines = 10}
+# Fill in the formula (a/c)/(b/d)
+
+```
+
+
+### Question 3
 
 
 Now we will look at the relation using logistic regression.
 
-In R we can estimate a logistic regression model using the command `glm()`The first parameter indicates the model formula. On the left side of the ~ sign the dependent variable is specified (here agvhd); on the right hand side the explanatory variables (here the single variable sexmatch). The parameter family indicates the distribution we use. The default model for a binomial distribution is the logistic regression model. The last parameter specifies is the data set we use. 
+In R we can estimate a logistic regression model using the command `glm()`The first parameter indicates the model formula. On the left side of the ~ sign the dependent variable is specified (here `agvhd`); on the right hand side the explanatory variables (here the single variable sexmatch). The parameter family indicates the distribution we use. The default model for a binomial distribution is the logistic regression model. The last parameter specifies is the data set we use. 
 
 ```{r P2-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
@@ -176,7 +202,7 @@ glm1
 ```
 
 ```{r P2-hint-1}
-# Just fill in the blanks
+# Look at the examples at the end of the chapter on logistic regression in the course notes and fill in the blanks.
 
 ```
 ```{r P2-hint-2}
@@ -185,9 +211,9 @@ glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
 glm1
 ```
 
-### Question 3
+### Question 4
 
-Use the summary command on the returned object to obtain the estimated coefficients standard errors and p-values from a Wald test. The odds ratios can be obtained by using exp(coef(glm1)). The function confint is used to obtain confidence estimates, again the exp function transforms them to the odds-ratio scale. Compare the OR with the results obtained in b).
+Use the summary command on the returned object to obtain the estimated coefficients standard errors and p-values from a Wald test. The odds ratios can be obtained by using exp(coef(glm1)). The function confint is used to obtain confidence estimates, again the exp function transforms them to the odds-ratio scale. Compare the OR with the result you obtained when you calculated it by hand.
 
 
 ```{r P3-setup}
@@ -216,10 +242,10 @@ exp(confint(glm1))
 
 ```
 
-### Question 4
+### Question 5
 
 
-Using drop1(glm1, test='LR') we also obtain the p-values from a likelihood ratio (LR) test. Compare the results between the LR and Wald test. 
+Using drop1(glm1, test='LRT') we also obtain the p-values from a likelihood ratio (LR) test. Compare the results between the LR and Wald test. 
 
 ```{r P4-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
@@ -233,7 +259,7 @@ drop1(___, test=___)
 ```
 
 ```{r P4-hint-1}
-# Fill in the blanks
+# Fill in the blanks. The code in the logistic regression chapter of the course notes explaines how to perform the different types of tests on the coefficient of a logistic regression model.
 ```
 
 ```{r P4-hint-2}
@@ -243,11 +269,11 @@ drop1(glm1, test='LRT')
 
 ## Exercises (p2)
 
-We will now look at the effect of a continous variable on the odds of agvhd. 	
+We will now look at the effect of a continous variable on the odds of `agvhd`. 	
 
-### Question 5
+### Question 6
 
-Specify a model using agedon as covariate. What is the estimated odds ratio of this continuous variable and the confidence interval? What is the meaning of the odds ratio? Call the estimated model glmAge.
+Specify a model using `agedon` as covariate. What is the estimated odds ratio of this continuous variable and the confidence interval? What is the meaning of the odds ratio? Call the estimated model `glmAge`.
 
 ```{r P5-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
@@ -259,7 +285,7 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 ```
 
 ```{r P5-hint-1}
-# Use the glm function as before.
+# Use the glm function as before. Look at the course notes to see what function you can use to create a confidence interval.
 ```
 
 ```{r P5-hint-2}
@@ -269,7 +295,7 @@ exp(coef(glmAge))
 exp(confint(glmAge))
 ```
 
-### Question 6
+### Question 7
 
 We are now going to plot the relation between the age of the donor and the estimated probabilities. We can use the `predict` function for this. The first argument is  the estimated `glm`. When we use `type = 'response'` we  obtain the predictions on the scale of the response (the 0-1 scale of probabilities, this in contrast to the scale of the linear predictor).
 
@@ -287,7 +313,7 @@ plot(x=bmt$agedon[order(bmt$agedon)],
 ```
 
 ```{r P6-hint-1}
-# Fill in the name of the model
+# Fill in the name of the model. And specify on what scale you want the predictions using the type argument.
 ```
 
 ```{r P6-hint-2}
@@ -298,7 +324,7 @@ plot(x=bmt$agedon[order(bmt$agedon)],
   type='l')
 ```
 
-### Question 7
+### Question 8
 
 In the model above we assume a linear relation between the log odds for agedon and the outcome. To test this assumption we can add the square of agedon to the model. Add the quadratic term to the model below (hint: use I(agedon^2)). Call the model glmAge2. Is the quadratic term significant?
 ```{r P7-setup}
@@ -324,7 +350,7 @@ glmAge<-glm(agvhd ~ agedon+I(agedon^2), family = 'binomial', data=bmt)
 
 Now we will build a multivariable model using multiple explanitory variables.
 
-### Question 8
+### Question 9
 
 Estimate a model using `agedon`, `agedon` squared, `agerec`, `sexmatch` and `diag`. What are the odds ratios?
 
@@ -341,19 +367,23 @@ glmMV <-
 ```
 
 ```{r P8-hint-1}
-# Use the glm function as before
+# Use the glm function as before. Check the course notes to see how you can estimate a model with several variables.
 ```
 
 ```{r P8-hint-2}
+#Put all of the explanatory variables on the right hand side of the formula argument, #Separated ny plus signs
+```
+
+```{r P8-hint-3}
 # The code is:
 glmMV<-glm(agvhd ~ agedon+I(agedon^2)+agerec+sexmatch+diag, family = 'binomial', data=bmt)
 exp(coef(glmMV))
 exp(confint(glmMV))
 ```
 
-### Question 9
+### Question 10
 
-Let’s visualize the risk of acute graft versus host desease for a 30 year old male  with acute nonlymphoblastic leukemia with a male and a female donor.
+Let's visualize the risk of acute graft versus host desease for a 30 year old male  with acute nonlymphoblastic leukemia with a male and a female donor.
 
 ```{r P9-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
@@ -375,7 +405,7 @@ plot(x=___, y=____, type='p',
 ```
 
 ```{r P9-hint-1}
-# Fill in the blanks
+# Fill in the blanks. See the course notes to see an example of ploting predicted values.
 ```
 
 ```{r P9-hint-2}

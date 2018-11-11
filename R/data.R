@@ -88,7 +88,8 @@
 #' \item{STEN}{}
 #' }
 #' @examples
-#' TODO
+#' data(fracture)
+#' with(fracture, table(LOC, STEN))
 "fracture"
 
 
@@ -96,8 +97,22 @@
 #'
 #' @docType data
 #' @keywords datasets
-#' @name diamonds
+#' @name pex
 #' @usage data(pex)
 #' @format A data frame with info about 131 individuals
 #' @references Van Linschoten (2009) Supervised exercise therapy versus usual care for patellofemoral pain syndrome: an open label randomised controlled trial - \emph{BMJ}
 "pex"
+
+
+#' Vaccination data
+#'
+#' @docType data
+#' @keywords datasets
+#' @name vaccination
+#' @usage data(vaccination)
+#' @format A data frame containing 6 variables and 12 rows
+#' @examples
+#' data(vaccination)
+#' vaccination
+#' @references A handbook of small data sets (1993)  and Mead, R  (1988) The design of experiments: statistical principles for practical application
+"vaccination"

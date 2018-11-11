@@ -1,0 +1,13 @@
+Area,Method,NeedleType,Vaccine batch,Ntested,Npos
+Staffordshire,Multiple puncture,Fixed,1,228,223
+Staffordshire,Multiple puncture,Detachable,1,221,210
+Staffordshire,Multiple puncture,Fixed,2,230,218
+Staffordshire,Intradermal,lntradermal,4,240,238
+Cardiff,Multiple puncture,Fixed,2,221,181
+Cardiff,Multiple puncture,Detachable,2,213,158
+Cardiff,Multiple puncture,Fixed,3,200,160
+Cardiff,Intradermal,Intradermal,4,214,186
+Sheffield,Multiple puncture,Fixed,1,223,198
+Sheffield,Multiple puncture,Detachable,3,228,189
+Sheffield,Multiple puncture,Fixed,3,216,177
+Sheffield,Intradermal,lntradermal,4,224,206

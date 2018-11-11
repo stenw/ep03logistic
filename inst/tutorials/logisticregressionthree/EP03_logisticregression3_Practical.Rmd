@@ -1,0 +1,196 @@
+---
+title: "Logistic regression 3"
+output: 
+  learnr::tutorial:
+     allow_skip: true
+tutorial:
+  id: "io.shinyapps.erasmusmc.logisticregression3"
+  version: 0.923
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library("learnr")
+library('EP03logistic')
+library(car)
+data("vaccination", package = "EP03logistic")
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Quiz
+
+The following questions test your knowledge about logistic regression, odds and odds ratios.
+
+### Question 1
+```{r Q1}
+quiz(
+  question("True or false (check all that apply)", 
+    type='multiple',         
+    answer("Nagelkerke's R2 measure is a rescaled version of Cox and Snell's R2", correct=TRUE),
+    answer("The test of Hosmer and Lemeshow is not suitable for ungrouped data"),
+    answer("An odds of one correspons to a probability of 50%", correct=TRUE),
+    answer("An ROC curve traditionally has the specificity plotted on the x-axis"),
+    answer("The c-statistic is a measure of the ability of the model to discriminate between the two outcome categories", correct=TRUE),
+        allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+
+### Question 2
+
+
+
+
+```{r Q3}
+quiz(
+  question("In the context of logistic regression models: what do we call the saturated model",
+    answer("A model that only contains an intercept"),
+    answer("A model that does not include the intercept"),
+    answer("A model with a parameter for each covariate pattern", correct=TRUE),
+    answer("A model with more parameters than the number of events (or non-events, whatever is the smallest number) divided by ten"),
+        allow_retry = TRUE, random_answer_order = FALSE, 
+    incorrect="I am affraid that is not correct."
+  )
+)
+```
+
+## Exercises (p1)
+
+Here we will examine the Vaccination data set (from Mead (1988) the Design of experiments: statistical principles for practical application). In the study from which the data set was taken a vaccination study was carried out using different vaccination methods. Additionally there are different batches of vaccine and different areas from which the subjects were sampled. The data set is loaded and named `vaccination`. All subjects were tested if the vaccination succeeded (a positive outcome) or not (a negative outcome).
+
+### Question 1
+
+First plot the data set. What are the number of subjects that are tested how many tested positive? Created a variable `Nneg` that contains the number of patients that tested negative.
+
+```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+
+
+```
+
+```{r P1-hint-1}
+# you can use the sum command to add the numbers in the Ntested and Npos columns respectively.
+```
+```{r P1-solution}
+vaccination$Nneg <- with(vaccination, Ntested-Npos)
+vaccination
+sum(vaccination$Ntested)
+sum(vaccination$Npos)
+sum(vaccination$Nneg)
+```
+
+### Question 2
+
+Estimate a logistic regression model using only the `Method` as predictor. Keep the data in aggregated form. Call the model `glm1`. Also compute odds ratio's and their confidence intervals.    
+
+```{r P2-setup, exercise=TRUE, exercise.lines = 10}
+
+vaccination$Nneg <- with(vaccination, Ntested-Npos)
+```
+
+
+```{r P2, exercise=TRUE, exercise.lines = 10}
+
+
+```
+
+```{r P2-hint-1, exercise=TRUE, exercise.lines = 10}
+# In the chapter about logistic regression in the course notes it is explained how to use the glm function for aggregated data. Perform a likelihood ratio test on the effect of the method.
+
+```
+
+```{r P2-hint-2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+glm1 <- glm(cbind(Npos, Nneg) ~  ___ , data=___, family=___)
+___(coef(___))
+exp(confint(___))
+```
+
+```{r P2-solution, exercise=TRUE, exercise.lines = 10}
+glm1 <- glm(cbind(Npos, Nneg) ~ Method, data=vaccination, family='binomial')
+exp(coef(glm1))
+exp(confint(glm1))
+glm0 <- glm(cbind(Npos, Nneg) ~ 1, data=vaccination, family='binomial')
+anova(glm0, glm1,test='LRT')
+```
+
+### Question 3
+
+Now correct for `Area` and `Vaccine.batch`. Call the model `glm2`. Again compute odds ratios and their confidence intervals. Perform a likelihood ratio test on the effect of the method.
+
+```{r P3-setup}
+vaccination$Nneg <- with(vaccination, Ntested-Npos)
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+glm1 <- glm(cbind(Npos, Nneg) ~ Method, data=vaccination, family='binomial')
+```
+
+```{r P3, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+
+```
+
+```{r P3-hint-1}
+# Add the covariates to the formula.
+
+```
+```{r P3-solution}
+glm2 <- glm(cbind(Npos, Nneg) ~ Method + Area + Vaccine.batch,
+            data=vaccination, family='binomial')
+exp(coef(glm2))
+exp(confint(glm2))
+glm0 <- glm(cbind(Npos, Nneg) ~ Area + Vaccine.batch, data=vaccination, family='binomial')
+anova(glm0, glm2,test='LRT')
+
+```
+
+### Question 4
+
+Now perform a deviance test to check the overall goodness-of-fit of `glm2`.
+
+```{r P4-setup}
+vaccination$Nneg <- with(vaccination, Ntested-Npos)
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+glm1 <- glm(cbind(Npos, Nneg) ~ Method, data=vaccination, family='binomial')
+glm2 <- glm(cbind(Npos, Nneg) ~ Method + Area + Vaccine.batch,
+            data=vaccination, family='binomial')
+ 
+```
+
+```{r P4, exercise=TRUE, exercise.lines = 10}
+```
+
+```{r P4-hint-1}
+# Remember that in the deviance test for the gopodness of fit we compare the model with the sadurated model.
+```
+
+```{r P4-hint-2}
+# The saturated model contains a parameter for each covariate pattern
+```
+```{r P4-solution}
+glm_sat <- glm(cbind(Npos, Nneg) ~ Method*Area*Vaccine.batch,
+            data=vaccination, family='binomial')
+
+anova(glm2, glm_sat, test='LRT')
+# or
+n_coef_sat <- length(coef(glm_sat)[!is.na(coef(glm_sat))])
+n_coef_2 <-length(coef(glm2)[!is.na(coef(glm2))])
+
+pchisq(as.vector(-2*(logLik(glm2)- logLik(glm_sat))), n_coef_sat- n_coef_2,lower.tail = FALSE )
+```
+
+### Question 5
+
+Use the function `influencePlot` to check if there are unusual observations. This function is defined in the `car` package which we have allready loaded.  
+
+```{r P5-setup}
+vaccination$Nneg <- with(vaccination, Ntested-Npos)
+bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
+glm1 <- glm(cbind(Npos, Nneg) ~ Method, data=vaccination, family='binomial')
+glm2 <- glm(cbind(Npos, Nneg) ~ Method + Area + Vaccine.batch,
+            data=vaccination, family='binomial')
+
+```
+
+```{r P5, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+# 
+
+```

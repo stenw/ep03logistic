@@ -3,22 +3,31 @@ library(dplyr)
 
 bmt <- foreign::read.spss(file='./data-raw/bmt.sav', to.data.frame=TRUE)
 usethis::use_data(bmt, overwrite = TRUE)
+saveRDS(bmt, './data-Rds/bmt.Rds')
 ova <- foreign::read.spss(file='./data-raw/ova.sav', to.data.frame=TRUE)
 usethis::use_data(ova, overwrite = TRUE)
+saveRDS(ova, './data-Rds/ova.Rds')
 fracture <- foreign::read.spss(file='./data-raw/fracture.sav', to.data.frame=TRUE)
 usethis::use_data(fracture, overwrite = TRUE)
+saveRDS(fracture, './data-Rds/fracture.Rds')
 endom <- foreign::read.spss(file='./data-raw/endom.sav', to.data.frame=TRUE)
 usethis::use_data(endom, overwrite = TRUE)
+saveRDS(endom, './data-Rds/endom.Rds')
 LBW <- foreign::read.spss(file='./data-raw/LBW.sav', to.data.frame=TRUE)
 usethis::use_data(LBW, overwrite = TRUE)
+saveRDS(LBW, './data-Rds/LBW.Rds')
 teeth <- read.table('./data-raw/teeth.dat', header = TRUE)
 usethis::use_data(teeth, overwrite = TRUE)
+saveRDS(teeth, './data-Rds/teeth.Rds')
 epilepsy <- read.table('./data-raw/epilepsy.dat', header = TRUE)
 usethis::use_data(epilepsy, overwrite = TRUE)
+saveRDS(epilepsy, './data-Rds/epilepsy.Rds')
 melanoma <- read.table('./data-raw/melanoma.dat', header = TRUE)
 usethis::use_data(melanoma, overwrite = TRUE)
+saveRDS(melanoma, './data-Rds/melanoma.Rds')
 endopaired <- read.csv('./data-raw/endompared.csv', header = TRUE)
 usethis::use_data(endopaired, overwrite = TRUE)
+saveRDS(endopaired, './data-Rds/endopaired.Rds')
 lung<-c(3035, 2552, 2704, 2554, 2014, 1655, 1721, 1524, 1596, 2074, 2199, 2512,
         2933, 2889, 2938, 2497, 1870, 1726, 1607, 1545, 1396, 1787, 2076, 2837,
         2787, 3891, 3179, 2011, 1636, 1580, 1489, 1300, 1356, 1653, 2013, 2823,
@@ -28,6 +37,7 @@ lung<-c(3035, 2552, 2704, 2554, 2014, 1655, 1721, 1524, 1596, 2074, 2199, 2512,
 matrix(lung, 12)
 lung_data <- data.frame(Y=lung, month=rep(1:12,6), year=rep(1974:1979, each=12))
 usethis::use_data(lung_data, overwrite = TRUE)
+saveRDS(lung_data, './data-Rds/lung_data.Rds')
 pex <- foreign::read.spss('./data-raw/pex.sav', to.data.frame = TRUE)
 names(pex)
 pex <-
@@ -52,9 +62,10 @@ pex %>% select(c("patnr1", "fysiothe", "leeftijd",
   mutate(fysiothe = recode(fysiothe, ja = "yes", nee='no'),
          sex= recode(sex, man='male', vrouw='female'))
 usethis::use_data(pex, overwrite = TRUE)
-
+saveRDS(pex, './data-Rds/pex.Rds')
 # saveRDS(pex, file='v:/HomeDir/959750/Onderwijs/ep03/logisticregression/data/pex.Rda')
 
 
 vaccination <- read.csv('./data-raw/vaccination.csv', header = TRUE)
 usethis::use_data(vaccination, overwrite = TRUE)
+saveRDS(vaccination, './data-Rds/vaccination.Rds')

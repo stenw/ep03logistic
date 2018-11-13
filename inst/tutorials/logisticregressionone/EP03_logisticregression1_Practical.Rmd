@@ -1,16 +1,34 @@
 ---
 title: "Logistic regression 1"
 output: 
-  learnr::tutorial:
-     allow_skip: true
-tutorial:
-  id: "io.shinyapps.erasmusmc.logisticregression1"
-  version: 0.923
-runtime: shiny_prerendered
+  # learnr::tutorial:
+  #   allow_skip: true
+  html_document:
+    number_sections: true
+#tutorial:
+#  id: "io.shinyapps.erasmusmc.logisticregression1"
+#  version: 0.923
+#runtime: shiny_prerendered
 ---
 
+```{r setup-switch, include = FALSE}
+if (names(rmarkdown::metadata$output) == "learnr::tutorial") {
+  library(learnr)
+  learnr::initialize_tutorial()
+  static <- FALSE
+} else {
+  knitr::opts_hooks$set(label = function(opt) {
+    if (any(opt$exercise) | grepl('hint',  opt$label) | grepl('solution', opt$label)|any(opt$tutorial)) 
+      opt$eval <- opt$include <- FALSE
+    
+    opt
+  })
+  
+  static <- TRUE
+}
+```
+
 ```{r setup, include=FALSE}
-library("learnr")
 library('EP03logistic')
 data("bmt", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
@@ -20,9 +38,12 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Quiz
 
 The following questions test your knowledge about logistic regression, odds and odds ratios.
+```{r}
+names(print(rmarkdown::metadata$output))
+```
 
 ### Question 1
-```{r Q1}
+```{r Q1, eval=!static}
 quiz(
   question("True or false (check all that apply)", 
     type='multiple',         
@@ -39,7 +60,7 @@ quiz(
 ```
 
 ### Question 2
-```{r Q2}
+```{r Q2, eval=!static}
 quiz(
   question("True or false (check all that apply)", 
     type='multiple',         
@@ -55,7 +76,8 @@ quiz(
 ### Question 3
 
 In Clements et. al. (1999) the effect of a high dose vs a low dose of D-Penicillamine in early diffuse systemic scleloris is investigated. 25 of the 36 patients that received a low dose responded while in the high dose group 17 out of 32 responded.
-```{r Q3}
+```{r Q3, eval=!static}
+
 quiz(
   question("What is the probability of responding in the low dose group?",
     answer("Less than 40%"),
@@ -71,7 +93,7 @@ quiz(
 ### Question 4
 
 
-```{r Q4}
+```{r Q4, eval=!static}
 quiz(
   question("What are the odds of responding in the low dose group?",
     answer("Less than 0.5"),
@@ -87,7 +109,7 @@ quiz(
 ### Question 5
 
 
-```{r Q5}
+```{r Q5, eval=!static}
 quiz(
   question("What is the odds ratio of the low dose vs the high dose?",
     answer("Less than 0.5"),
@@ -102,7 +124,7 @@ quiz(
 
 ### Question 6
 
-```{r Q6}
+```{r Q6, eval=!static}
 quiz(
   question("What is the standard error of the log odds ratio of the dose?",
     answer("approximately 0.5", correct=TRUE),
@@ -117,7 +139,7 @@ quiz(
 
 ### Question 7
 
-```{r Q7}
+```{r Q7, eval=!static}
 quiz(
   question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low) (use a calculator when needed)",
     answer("smaller than 0.5"),
@@ -125,7 +147,7 @@ quiz(
     answer("between 1 and 1.5", correct=TRUE),
     answer("between 1.5 and 2"),
     answer("larger than 2"),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE,
     incorrect="When you know the odds ratio and se of the log odds ratio you can compute a confidence interval. Note that we are interested in the effect of the hogh dose greoup relative to that of the low dose group"
   )
 )
@@ -140,16 +162,17 @@ bmt <- read.spss("/path/to/file/BMT.sav", to.data.frame = TRUE)
 ```
 When reading in the SPSS file the file path between the quotes should correspond the location where the file is stored on your computer. R will give you a warning (as is frequently the case when importing SPSS files). In these exercises you can ignore this type of warning. 
 Here (in the shiny app), we have allready loaded the bmt data.
+
 ### Question 1
 
 a) Define a new variable sexmatch with value 1 if the receiver and donor have the same sex and value 0 if not. In R you can do this using:
 ```{r, eval=FALSE}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 ```
-b.	Make a cross table of the outcome agvhd against sexmatch using the table function. Add the proportions of healthy and deseased with the prop.table function. Use chisq.test to perform a chi2-test.
+b.	Make a cross table of the outcome agvhd against sexmatch using the `table` function. Add the proportions of healthy and deseased with the `prop.table` function. Use `chisq.test` to perform a chi2-test.
 
-Is there a significant relation between this variables?
-Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. 
+Is there a significant relation between these variables?
+
 
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
@@ -172,14 +195,14 @@ chisq.test(tab1b)
 ```
 
 ### Question 2
-Use R as a calculator to calculate the odds ratio from the crosstabulation table.
+Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. Use R as a calculator to calculate the odds ratio from the crosstabulation table.
 
 ```{r P15, exercise=TRUE, exercise.lines = 10}
 
 
 ```
 
-```{r P15-hit-1, exercise=TRUE, exercise.lines = 10}
+```{r P15-hint-1, exercise=TRUE, exercise.lines = 10}
 # Fill in the formula (a/c)/(b/d)
 
 ```
@@ -190,13 +213,14 @@ Use R as a calculator to calculate the odds ratio from the crosstabulation table
 
 Now we will look at the relation using logistic regression.
 
-In R we can estimate a logistic regression model using the command `glm()`The first parameter indicates the model formula. On the left side of the ~ sign the dependent variable is specified (here `agvhd`); on the right hand side the explanatory variables (here the single variable sexmatch). The parameter family indicates the distribution we use. The default model for a binomial distribution is the logistic regression model. The last parameter specifies is the data set we use. 
+In R we can estimate a logistic regression model using the command `glm()`The first parameter indicates the model formula. On the left side of the ~ sign the dependent variable is specified (here `agvhd`); on the right hand side the explanatory variables (here the single variable sexmatch). The parameter family indicates the distribution we use. The default model for a binomial distribution is the logistic regression model. The last parameter specifies the data set we use. 
 
 ```{r P2-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 ```
 
-```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE, include=static, echo=!static, resuts=ifelse(static,'hide','markup')}
+print(knitr::opts_current$get())
 glm1<-glm(___ ~ ____, family = ____, data=___)
 glm1
 ```
@@ -213,7 +237,7 @@ glm1
 
 ### Question 4
 
-Use the summary command on the returned object to obtain the estimated coefficients standard errors and p-values from a Wald test. The odds ratios can be obtained by using exp(coef(glm1)). The function confint is used to obtain confidence estimates, again the exp function transforms them to the odds-ratio scale. Compare the OR with the result you obtained when you calculated it by hand.
+Use the summary command on the returned object to obtain the estimated coefficients standard errors and p-values from a Wald test. The odds ratios can be obtained by using `exp(coef(glm1))`. The function confint is used to obtain confidence estimates, again the exp function transforms them to the odds-ratio scale. Compare the OR with the result you obtained when you calculated it by hand.
 
 
 ```{r P3-setup}
@@ -245,7 +269,7 @@ exp(confint(glm1))
 ### Question 5
 
 
-Using drop1(glm1, test='LRT') we also obtain the p-values from a likelihood ratio (LR) test. Compare the results between the LR and Wald test. 
+Using `drop1(glm1, test='LRT')` we also obtain the p-values from a likelihood ratio (LR) test. Compare the results between the LR and Wald test. 
 
 ```{r P4-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)

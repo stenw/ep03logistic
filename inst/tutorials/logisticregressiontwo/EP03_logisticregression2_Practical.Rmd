@@ -377,7 +377,7 @@ contrasts(fracture$LOC)<-contrastsbase
 
 ### Question 8
 
-What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%? (Using the moel from Ex 5.)
+What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%? (Using the model from Ex 5.)
 
 ```{r P8-setup}
 glm37 <-glm(DEF~C(LOC, base=3)+STEN,data=fracture, family = binomial)
@@ -449,7 +449,7 @@ influence.measures(glm35)
 
 ### Question 10
 
-Plot the area under the AUC curve for model `glm35` using the `ROC` function of the `Epi` package. Also compute Nagelkerke's R2 measure. For this you can use the `PseudoR2` function in the `DescTools` package. The packages `Epi` and `DescTools` are already loaded.
+Plot the area under the AUC curve for the model you estimated in question 5 (which we have called `glm35`) using the `ROC` function of the `Epi` package. Also compute Nagelkerke's R2 measure. For this you can use the `PseudoR2` function in the `DescTools` package. The packages `Epi` and `DescTools` are already loaded.
 
 
 ```{r P10-setup}

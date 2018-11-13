@@ -1,0 +1,108 @@
+---
+title: "Conditional logistic regression"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library('survival')
+library(devtools)
+devtools::load_all('.')
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+## Exercises
+
+In this exercise we look at the data of a matched case-control study. The analysis to be used for this data is conditional logistic regression. We can perform this type of analysis with the clogit function which is located in the survival package. The data set we use is called endom and is already loaded.
+
+Variables we will use are
+The data are from the Los Angeles study (reported by Mack e.a., 1976) of endometrial
+cancer. The aim was to study the effect of exegenous oestrogens on the risk of
+endometrial cancer. Each of the 63 cases was matched to 4 control women, living in the
+same community, with the same age and marital status. (The difference in age is never
+more than two years).
+- `STRATUM` stratum number
+
+- `OUTCOME` case or control
+
+- `GALL` history of gall-bladder disease 
+
+- `HYP` history of hypertension 
+
+- `OB` obesitas 
+
+- `EST` history of oestrogen use 
+
+- `DOS` dose of oestrogens in mg/day 
+
+- `DUR` duration of oestrogen use in months 
+
+- `NON` use of other drugs: 
+
+- `DURATION`  duration of oestrogen use (continuous in months)
+
+- `AGE` age of the subject
+
+- `AGEC` age of the matched case
+
+- `AGEGR` age of the matched case in categories: 
+
+### Question 1
+
+First make sure the response is coded as 0/1. We wil call this variable out. Estimate a conditional logistic regression model to investigate the effect of history of oestrogen use on endometrial cancer  using `clogit` cll the fiited model `fit1`. Interpret the results using `summary`.
+
+
+
+```{r P1-hint-2, include=FALSE}
+# Use:
+endom$OUT<-as.numeric(endom$OUTCOME)-1
+table(endom$OUT, endom$OUTCOME)
+endom$ESTAGEC <- ifelse(endom$EST=='yes', endom$AGEC, 0)
+fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
+summary(fit1)
+```
+
+### Question 2
+
+Because the patients are matched on age we cannot put the main effect of this variable in the model.  We can however look at interaction effects. Add the interaction with AGEC to the model (and call this fit2) and test if this is statistically significant using `anova`.
+
+
+
+```{r P2-hint-2, include=FALSE}
+# The code is:
+endom$ESTAGEC <- ifelse(endom$EST=='yes', endom$AGEC, 0)
+fit2 <- clogit(OUT ~ EST+ESTAGEC+  strata(STRATUM), data=endom)
+summary(fit2)
+anova(fit2, fit1)
+```
+
+### Question 3
+
+We think  `GALL`, `NON`, `OB` and `HYP` could be important variables. Extend model `fit1` to accommodate this. Use again the `summary()` method to get a detailed output and 
+interpret the results. Name the fitted model `fit3`.
+```{r P3-hint-2, include=FALSE}
+# The code is:
+fit3 <- clogit(OUT ~ EST + GALL + NON + OB + HYP + strata(STRATUM), data = endom)
+summary(fit3)
+```
+
+### Question 4
+
+Perhaps the effect of EST is different if you have gall bladder desease. Add the interaction to the model. Check if it is significant using an chi2-test
+
+
+
+```{r P4-hint-2, include=FALSE}
+# The code is:
+fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom)
+anova(fit4, fit3)
+```
+
+### Question 5
+
+Now we also want to look at oestrogen use and dose. However these variables are missing for some individuals. When we do embedding tests we need to make sure we are comparing the same 
+individuals. This can be done using the complete.cases() function.
+Add the variables one by one and perform the chi2 test.
+```{r P5-hint-2}
+```

@@ -12,4 +12,10 @@ Imports:
   foreign,
   survival,
   learnr,
-  Matrix
+  Matrix,
+  DescTools,
+  Epi,
+  car,
+  learnr
+Suggests:
+  logistf

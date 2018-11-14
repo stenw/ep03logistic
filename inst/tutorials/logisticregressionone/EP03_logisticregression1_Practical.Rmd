@@ -1,14 +1,14 @@
 ---
 title: "Logistic regression 1"
 output: 
-  # learnr::tutorial:
-  #   allow_skip: true
-  html_document:
-    number_sections: true
-#tutorial:
-#  id: "io.shinyapps.erasmusmc.logisticregression1"
-#  version: 0.923
-#runtime: shiny_prerendered
+   learnr::tutorial:
+     allow_skip: true
+  #html_document:
+  #  number_sections: true
+tutorial:
+  id: "io.shinyapps.erasmusmc.logisticregression1"
+  version: 0.925
+runtime: shiny_prerendered
 ---
 
 ```{r setup-switch, include = FALSE}

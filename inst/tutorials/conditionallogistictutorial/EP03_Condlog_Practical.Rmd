@@ -28,7 +28,7 @@ quiz(
   question("True or false?",
     answer("True"),
     answer("False", correct=TRUE),
-        allow_retry = TRUE, random_answer_order = FALSE, incorrect=¨Incorrect. Only when we have matched data with small strata unconditional logistic regression cannot be used.¨
+        allow_retry = TRUE, random_answer_order = FALSE, incorrect= "Incorrect. Only when we have matched data with small strata unconditional logistic regression cannot be used." 
   )
 )
 ```
@@ -226,7 +226,7 @@ cc<-complete.cases(endom$DOS)
 fit4 <- clogit(__, data=endom[cc,])
 fit5 <- clogit(___  +DOS, ___, data=endom[cc,])
 ```
-```{r P5-hint-2, eval=FALSE}
+```{r P5-hint-3, eval=FALSE}
 cc<-complete.cases(endom$DOS)
 fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom[cc,])
 fit5<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+DOS+ strata(STRATUM), data=endom[cc,])

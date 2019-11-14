@@ -3,7 +3,6 @@
 \docType{data}
 \name{LBW}
 \alias{LBW}
-\alias{LBW}
 \title{Low Birth Weight Data}
 \format{A data frame with 36 observations and 5 variables:
 \describe{

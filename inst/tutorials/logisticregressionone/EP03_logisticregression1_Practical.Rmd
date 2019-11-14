@@ -3,10 +3,10 @@ title: "Logistic regression 1"
 output: 
   learnr::tutorial:
      allow_skip: true
+runtime: shiny_prerendered
 tutorial:
   id: "io.shinyapps.erasmusmc.logisticregression1"
-  version: 0.923
-runtime: shiny_prerendered
+  version: 0.925
 ---
 
 ```{r setup, include=FALSE}
@@ -24,10 +24,10 @@ The following questions test your knowledge about logistic regression, odds and 
 ### Question 1
 ```{r Q1}
 quiz(
-  question("True or false (check all that apply)", 
+  question("True or false (check all correct statements)", 
     type='multiple',         
-    answer("The confidence interval around an odds ratio is symetric"),
-    answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios"),
+    answer("The confidence interval around an odds ratio is symetric", message="It is only symetric on the log odds scale"),
+    answer("The log of the coefficients of an logistic regression can be interpreted as odds ratios", message="Think carefully how to transform the coefficients to odds ratios"),
     answer("An odds of one corresponds to a probability of 50%", correct=TRUE),
     answer("When a probability is one, the corresponding odds are infinite", correct=TRUE),
     answer("The logistic function cannot reach values larger than one", correct=TRUE),
@@ -42,9 +42,9 @@ quiz(
 quiz(
   question("True or false (check all that apply)", 
     type='multiple',         
-    answer("The logistic regression model can only be used with continuous independent variables"),
-    answer("The logistic regression model can only be used with continuous dependent variables"),
-    answer("The logistic regression model can only be used with binary independent variables"),
+    answer("The logistic regression model can only be used with continuous independent variables", message="Remember that the independent variables apear at the right hand side of the model equation (the Xs). Check the course slides for the types of variables you can put there. "),
+    answer("The logistic regression model can only be used with continuous dependent variables", message="When the response variable is continuous we an use linear regression. Check why for certain response types we may not use this model."),
+    answer("The logistic regression model can only be used with binary independent variables", message="Remember that the independent variables apear at the right hand side of the model equation (the Xs). Check the course slides for the types of variables you can put there. "),
     answer("The logistic regression model can only be used with binary dependent variables", correct=TRUE),
         allow_retry = TRUE, random_answer_order = FALSE
   )
@@ -57,10 +57,10 @@ In Clements et. al. (1999) the effect of a high dose vs a low dose of D-Penicill
 ```{r Q3}
 quiz(
   question("What is the probability of responding in the low dose group?",
-    answer("Less than 40%"),
-    answer("Between 40% and 60%"),
+    answer("Less than 40%", message="To calculate the estimated probabilities simply divide the number of responders in the low dose group to the total number of patients in this group"),
+    answer("Between 40% and 60%", message="To calculate the estimated probabilities simply divide the number of responders in the low dose group to the total number of patients in this group"),
     answer("Between 60% and 80%", correct=TRUE),
-    answer("More than 80%"),
+    answer("More than 80%", message="To calculate the estimated probabilities simply divide the number of responders in the low dose group to the total number of patients in this group"),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -72,9 +72,9 @@ quiz(
 ```{r Q4}
 quiz(
   question("What are the odds of responding in the low dose group?",
-    answer("Less than 0.5"),
-    answer("Between 0.5 and 1"),
-    answer("Between 1 and 2"),
+    answer("Less than 0.5", message="To calculate the estimated probabilities simply divide the number of responders in the low dose group to the number of non-responders"),
+    answer("Between 0.5 and 1", message="To calculate the estimated probabilities simply divide the number of responders in the low dose group to the number of non-responders"),
+    answer("Between 1 and 2", message="To calculate the estimated probabilities simply divide the number of responders in the low dose group to the number of non-responders"),
     answer("More than 2", correct=TRUE),
     allow_retry = TRUE, random_answer_order = FALSE
   )
@@ -87,9 +87,9 @@ quiz(
 ```{r Q5}
 quiz(
   question("What is the odds ratio of the low dose vs the high dose?",
-    answer("Less than 0.5"),
-    answer("Between 0.5 and 1"),
-    answer("Between 1 and 2"),
+    answer("Less than 0.5",message = "compute the odds for both doses and divide"),
+    answer("Between 0.5 and 1",message = "compute the odds for both doses and divide"),
+    answer("Between 1 and 2",message = "compute the odds for both doses and divide"),
     answer("More than 2", correct=TRUE),
     allow_retry = TRUE, random_answer_order = FALSE
   )
@@ -102,9 +102,9 @@ quiz(
 quiz(
   question("What is the standard error of the log odds ratio of the dose?",
     answer("approximately 0.5", correct=TRUE),
-    answer("approximately 1"),
-    answer("approximately 1.5"),
-    answer("approximately 2"),
+    answer("approximately 1", message = "The se can be computed as the square root of the sum of the inverse of all cell numbers (sqrt(1/a+1/b+1/c+1/d))"),
+    answer("approximately 1.5", message = "The se can be computed as the square root of the sum of the inverse of all cell numbers (sqrt(1/a+1/b+1/c+1/d))"),
+    answer("approximately 2", message = "The se can be computed as the square root of the sum of the inverse of all cell numbers (sqrt(1/a+1/b+1/c+1/d))"),
     allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -115,11 +115,11 @@ quiz(
 ```{r Q7}
 quiz(
   question("What is the upper limit of the 95% confidence interval of odds ratio of the dose? (high vs low)",
-    answer("smaller than 0.5"),
-    answer("between 0.5 and 1"),
+    answer("smaller than 0.5",message = "Compute OR (high vs low!) take log compute CI and transform back"),
+    answer("between 0.5 and 1",message = "Compute OR (high vs low!) take log compute CI and transform back"),
     answer("between 1 and 1.5", correct=TRUE),
-    answer("between 1.5 and 2"),
-    answer("larger than 2"),
+    answer("between 1.5 and 2",message = "Compute OR (high vs low!) take log compute CI and transform back"),
+    answer("larger than 2",message = "Compute OR (high vs low!) take log compute CI and transform back"),
     allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -127,7 +127,9 @@ quiz(
 
 ## Exercises (p1)
 
-We will now examine how logistic regression can be used to investigate the risk of developing acute graft versus host disease after a bone marrow transplant. We will use the data set BMT.sav
+We will now examine how logistic regression can be used to investigate the risk of developing acute graft versus host disease after a bone marrow transplant. We will use the data set bmt which should already be imported in your work space.
+
+The purpose of the excercise is to learn to work with the R functions by which you can perform logistic regression (`glm`, `coef`, `confint`, `anova`, etc.). 
 
 
 

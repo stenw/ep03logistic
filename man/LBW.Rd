@@ -14,16 +14,11 @@
 }}
 \usage{
 LBW
-
-LBW
 }
 \description{
 Low Birth Weight Data
-
-Fracture Data
 }
 \examples{
-TODO
 TODO
 }
 \keyword{datasets}

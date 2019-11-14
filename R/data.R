@@ -1,3 +1,35 @@
+#' Endometrial cancer data
+#'
+#' This file contains 315 records with data on cases and controls
+#'  from the Leisure World study of endometrial cancer as related
+#'   to treatment with estrogens for menopausal symptoms and
+#'   other risk factors.
+#'   Each case was matched to four controls. Matching was by date
+#'   of birth (within one year), marital status, and residence.
+#'
+#' @format A data frame with 315 observations and 13 variables:
+#' \describe{
+#' \item{STRATUM}{Stratum }
+#' \item{OUTCOME}{Case or Control}
+#' \item{GALL}{Gallbladder disease}
+#' \item{HYP}{Hypertension}
+#' \item{OB}{Obesity}
+#' \item{EST}{Estrogen usage}
+#' \item{DOSE}{Dose of conjugated}
+#' \item{DUR}{Duration of estrogen use in months}
+#' \item{NON}{Non-estrogen drug}
+#' \item{AGE}{age of the subject}
+#' \item{AGE}{age of the matching control}
+#'  \item{AGEGR}{age category}
+#' }
+#'
+#' @source Breslow NE, and Day N, Statistical Methods in Cancer Research. Volume I:
+#'  The Analysis of Case-Control Studies. IARC Scientific Publications, IARC:Lyon, 1980.
+#'
+#' @examples
+#' TODO
+"endom"
+
 #' Bone merrow transplant data
 #'
 #' @format A data frame with 166 observations and 6 variables:
@@ -56,5 +88,31 @@
 #' \item{STEN}{}
 #' }
 #' @examples
-#' TODO
-"LBW"
+#' data(fracture)
+#' with(fracture, table(LOC, STEN))
+"fracture"
+
+
+#' Pex data
+#'
+#' @docType data
+#' @keywords datasets
+#' @name pex
+#' @usage data(pex)
+#' @format A data frame with info about 131 individuals
+#' @references Van Linschoten (2009) Supervised exercise therapy versus usual care for patellofemoral pain syndrome: an open label randomised controlled trial - \emph{BMJ}
+"pex"
+
+
+#' Vaccination data
+#'
+#' @docType data
+#' @keywords datasets
+#' @name vaccination
+#' @usage data(vaccination)
+#' @format A data frame containing 6 variables and 12 rows
+#' @examples
+#' data(vaccination)
+#' vaccination
+#' @references A handbook of small data sets (1993)  and Mead, R  (1988) The design of experiments: statistical principles for practical application
+"vaccination"

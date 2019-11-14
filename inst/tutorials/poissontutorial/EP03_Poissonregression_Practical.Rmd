@@ -18,11 +18,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Quiz
 
-The following questions test your knowledge about poisson regression
+The following questions test your knowledge about Poisson regression
 
 ### Question 1
 A trial is set up to compare a new procedure against usual care. We investigate the number of interventions.
-Consider the following output from a poisson regression:
+Consider the following output from a Poisson regression:
 
 |              | beta     | Std. Error | z value |
 |--------------|----------|------------|---------|
@@ -140,7 +140,7 @@ xtabs(death~age+smoke, data=doll)
 
 ### Question 2
 
-Now we are going to estimate a Poisson model. First create the term to use as an offset variable. Now estimate a poisson model using only an intercept (and the offset). Call the model glm1 What is the interpretation of the estimated coefficient? Also estimate the coefficient by hand using the table.
+Now we are going to estimate a Poisson model. First create the term to use as an offset variable. Now estimate a Poisson model using only an intercept (and the offset). Call the model glm1 What is the interpretation of the estimated coefficient? Also estimate the coefficient by hand using the table.
 
 
 ```{r P2, exercise=TRUE, exercise.lines = 10}

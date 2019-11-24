@@ -116,3 +116,18 @@
 #' vaccination
 #' @references A handbook of small data sets (1993)  and Mead, R  (1988) The design of experiments: statistical principles for practical application
 "vaccination"
+
+
+
+#' Vaccination data
+#'
+#' @docType data
+#' @keywords datasets
+#' @name arthritis
+#' @usage data(arthritis)
+#' @format A data frame containing 6 variables and 302 rows / patients
+#' @examples
+#' data(arthritis)
+#' arthritis
+#' @references Lipsitz, S.R. and Kim, K. and Zhao, L. (1994) Analysis of repeated categorical data using generalized estimating equations. Statistics in Medicine, 13, 1149-116
+"arthritis"

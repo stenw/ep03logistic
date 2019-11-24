@@ -1,5 +1,6 @@
 library(devtools)
 library(dplyr)
+library(multgee)
 
 bmt <- foreign::read.spss(file='./data-raw/bmt.sav', to.data.frame=TRUE)
 usethis::use_data(bmt, overwrite = TRUE)
@@ -69,3 +70,26 @@ saveRDS(pex, './data-Rds/pex.Rds')
 vaccination <- read.csv('./data-raw/vaccination.csv', header = TRUE)
 usethis::use_data(vaccination, overwrite = TRUE)
 saveRDS(vaccination, './data-Rds/vaccination.Rds')
+data("arthritis")
+arthritis <- arthritis[arthritis$time==5,]
+arthritis$arthritis_fu <- factor(arthritis$y,levels = 1:5,
+                                 labels = c('very poor', 'poor', 'fair', 'good', 'very good'))
+arthritis$baseline <- factor(arthritis$baseline,levels = 1:5,
+                             labels = c('very poor', 'poor', 'fair', 'good', 'very good'))
+arthritis$time <- NULL
+arthritis$y <- NULL
+arthritis$sex <- factor(arthritis$sex, levels = 1:2, labels = c('female', 'male'))
+arthritis$trt <- factor(arthritis$trt, levels = 1:2, labels = c('Placebo', 'Auranofin'))
+
+saveRDS(arthritis, './data-Rds/arthritis.Rds')
+usethis::use_data(arthritis, overwrite = TRUE)
+TT<-table(teeth$X, teeth$Y)
+xx<-as.numeric(rownames(TT))
+yy<-as.numeric(colnames(TT))
+aggregateteeth<- data.frame(X=xx, present=TT[,2], absent=TT[,1], n=rowSums(TT) )
+saveRDS(aggregateteeth, './data-Rds/aggregateteeth.Rds')
+usethis::use_data(aggregateteeth, overwrite = TRUE)
+
+save(arthritis, vaccination, pex, bmt, ova, fracture, endom, LBW, teeth, epilepsy, melanoma, endopaired, lung_data,
+       aggregateteeth,
+     file = './data-Rds/EP03logistic.Rd')

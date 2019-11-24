@@ -11,7 +11,7 @@ library("learnr")
 library('survival')
 library('Matrix')
 library('EP03logistic')
-#data("endom", package = "EP03logistic")
+data("endom", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -152,7 +152,7 @@ anova(____)
 # Define the interactionterm yourself first and than estimate a conditional logistic
 # regression model like in the first exercise.
 ```
-```{r P2-hint-2}
+```{r P2-hint-2, eval=FALSE}
 # The code is:
 endom$ESTAGEC <- ifelse(endom$EST=='yes', endom$AGEC, 0)
 fit2 <- clogit(OUT ~ EST+ESTAGEC+  strata(STRATUM), data=endom)
@@ -162,7 +162,7 @@ anova(fit2, fit1)
 
 ### Question 3
 
-We think  `GALL`, `NON`, `OB` and `HYP` could be important variables. Extend model `fit1` to accommodate this. Use again the `summary()` method to get a detailed output and 
+We think  `GALL`, `NON`, `OB` and `HYP` could be important variables. Extend model `fit1` to accommodate this. (we leave out the interaction this time) Use again the `summary()` method to get a detailed output and 
 interpret the results. Name the fitted model `fit3`.
 
 ```{r P3, exercise=TRUE, exercise.lines = 10}
@@ -172,7 +172,7 @@ interpret the results. Name the fitted model `fit3`.
 ```{r P3-hint-1}
 # Add the variables to the formula. For the moment we do not look at age. 
 ```
-```{r P3-hint-2}
+```{r P3-hint-2, eval=FALSE}
 # The code is:
 fit3 <- clogit(OUT ~ EST + GALL + NON + OB + HYP + strata(STRATUM), data = endom)
 summary(fit3)
@@ -194,7 +194,7 @@ fit3 <- clogit(OUT ~ EST + GALL + NON + OB + HYP + strata(STRATUM), data = endom
 # Just add the interaction and use anova() function giving as arguments the two models
 ```
 
-```{r P4-hint-2}
+```{r P4-hint-2, eval=FALSE}
 # The code is:
 fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom)
 anova(fit4, fit3)
@@ -219,7 +219,7 @@ cc<-complete.cases(endom$DOS)
 fit4 <- clogit(__, data=endom[cc,])
 fit5 <- clogit(___  +DOS, ___, data=endom[cc,])
 ```
-```{r P5-hint-2}
+```{r P5-hint-2, eval=FALSE}
 cc<-complete.cases(endom$DOS)
 fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom[cc,])
 fit5<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+DOS+ strata(STRATUM), data=endom[cc,])

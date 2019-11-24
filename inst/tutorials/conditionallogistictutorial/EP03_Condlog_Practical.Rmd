@@ -4,6 +4,9 @@ output:
   learnr::tutorial:
      allow_skip: true
 runtime: shiny_prerendered
+tutorial:
+  id: "io.shinyapps.erasmusmc.condregression"
+  version: 0.924
 ---
 
 ```{r setup, include=FALSE}
@@ -26,22 +29,22 @@ When we have case-control data we cannot use (unconditional) logistic regression
 ```{r Q1}
 quiz(
   question("True or false?",
-    answer("True"),
+    answer("True", message = 'In unmatched studies you can always user regular logistic regression. Even in matched designs you just need a way to control for the matching factor; this does not always haveb to be contitioning.'),
     answer("False", correct=TRUE),
-        allow_retry = TRUE, random_answer_order = FALSE
+        allow_retry = TRUE, random_answer_order = FALSE, incorrect= "Incorrect. Only when we have matched data with small strata unconditional logistic regression cannot be used." 
   )
 )
 ```
 
 ### Question 2
 
-In general we cannot estimate the probabilities based on conditional logistic regression
+In general we cannot estimate the probabilities based on conditional logistic regression without some external knowledge.
 ```{r Q2}
 quiz(
   question("True or false",
     answer("True", correct=TRUE),
     answer("False"),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE, incorrect='Because the intercept in conditional logistic regression is influenced by the prevalence and the ratio of cases to controls we cannot estimate probabilities in the usual way.'
   )
 )
 ```
@@ -54,7 +57,7 @@ quiz(
   question("True or false",
     answer("True", correct = TRUE),
     answer("False"),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE, incorrect='The stratifying factors are constant within the strata so cannot beestimated. Interaction effects that include the stratyfying factors and an other covariate generally can.'
   )
 )
 ```
@@ -67,21 +70,22 @@ quiz(
   question("True or false",
     answer("True"),
     answer("False", correct = TRUE),
-    allow_retry = TRUE, random_answer_order = FALSE
+    allow_retry = TRUE, random_answer_order = FALSE,  incorrect="Even in normail (unconditional) logistic regression, it is the antilog of the coefficients that can be interpreted as ORs."
   )
 )
 ```
 
 ## Exercises
 
-In this exercise we look at the data of a matched case-control study. The analysis to be used for this data is conditional logistic regression. We can perform this type of analysis with the clogit function which is located in the survival package. The data set we use is called endom and is already loaded.
+In this exercise we look at the data of a matched case-control study. The analysis to be used for this data is conditional logistic regression. We can perform this type of analysis with the `clogit` function which is located in the `survival` package. The data set we use is called endom and is already loaded.
 
-Variables we will use are
+
 The data are from the Los Angeles study (reported by Mack e.a., 1976) of endometrial
 cancer. The aim was to study the effect of exegenous oestrogens on the risk of
 endometrial cancer. Each of the 63 cases was matched to 4 control women, living in the
 same community, with the same age and marital status. (The difference in age is never
 more than two years).
+Variables we will use are:
 - `STRATUM` stratum number
 
 - `OUTCOME` 0 = control, 1 = case
@@ -110,7 +114,7 @@ more than two years).
 
 ### Question 1
 
-First make sure the response is coded as 0/1. Estimate a conditional logistic regression model to investigate the effect of history of oestrogen use on endometrial cancer  using `clogit` cll the fiited model `fit1`. Interpret the results using `summary`.
+First we recode the outcome as 0/1. We call this variable OUT. Estimate a conditional logistic regression model to investigate the effect of history of oestrogen use on endometrial cancer  using `clogit` cll the fiited model `fit1`. Interpret the results using `summary`.
 
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 endom$OUT<-endom$OUTCOME=='case'
@@ -122,7 +126,7 @@ summary(___)
 # Use clogit to do conditional logistic regression. The first argument is the model formula
 # The outcome should be specified left of the ~-sign and the explatinary variables go on the 
 # right. Here we look at the effect of EST on OUT. (where OUT is based on outcome).
-# There is also the sacial argument stata() to indicate the stratum
+# There is also the special argument stata() to indicate the stratum. At the end of the Conditional logistic regression chapter in the course notes an example is given of an analysis done in R.
 ```
 ```{r P1-hint-2}
 # Use:
@@ -154,8 +158,7 @@ anova(____)
 ```
 ```{r P2-hint-2, eval=FALSE}
 # The code is:
-endom$ESTAGEC <- ifelse(endom$EST=='yes', endom$AGEC, 0)
-fit2 <- clogit(OUT ~ EST+ESTAGEC+  strata(STRATUM), data=endom)
+fit2 <- clogit(OUT ~ EST+EST:AGEC+  strata(STRATUM), data=endom)
 summary(fit2)
 anova(fit2, fit1)
 ```
@@ -202,12 +205,14 @@ anova(fit4, fit3)
 
 ### Question 5
 
-Now we also want to look at oestrogen use and dose. However these variables are missing for some individuals. When we do embedding tests we need to make sure we are comparing the same 
+Now we also want to look at the dose of oestrogen. However the variable `DOS` missing for some individuals. When we do embedding tests we need to make sure we are comparing the same 
 individuals. This can be done using the complete.cases() function.
-Add the variables one by one and perform the chi2 test.
+Add the dose to the model  with EST + GALL + NON + OB + HYP and perform a chi2 test.
+
 
 ```{r P5-setup}
-
+fit3 <- clogit(OUT ~ EST + GALL + NON + OB + HYP + strata(STRATUM), data = endom)
+fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom)
 ```
 
 ```{r P5, exercise=TRUE, exercise.lines = 12}
@@ -215,14 +220,19 @@ Add the variables one by one and perform the chi2 test.
 ```
 
 ```{r P5-hint-1, eval=FALSE}
+# Use
+# cc<- complete.cases(endom$DOS)
+
+
+```{r P5-hint-2, eval=FALSE}
 cc<-complete.cases(endom$DOS)
 fit4 <- clogit(__, data=endom[cc,])
 fit5 <- clogit(___  +DOS, ___, data=endom[cc,])
 ```
-```{r P5-hint-2, eval=FALSE}
+```{r P5-hint-3, eval=FALSE}
 cc<-complete.cases(endom$DOS)
 fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom[cc,])
 fit5<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+DOS+ strata(STRATUM), data=endom[cc,])
 anova(fit4, fit5, test='LRT')
-# same for oestrogen
+
 ```

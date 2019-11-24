@@ -4,23 +4,25 @@ output:
   learnr::tutorial:
      allow_skip: true
 tutorial:
-  id: "io.shinyapps.erasmusmc.logisticregression1"
-  version: 0.922     
+  id: "io.shinyapps.erasmusmc.logisticregression2"
+  version: 0.923     
 runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
 library("learnr")
 library(ROCR)
+library(Epi)
 library('EP03logistic')
-data("bmt", package = "EP 03logistic")
+library('DescTools')
+data("bmt", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
 ## Quiz
 
-The following questions test your knowledge about logistic regression, odds and odds ratios.
+The following questions test your knowledge about logistic regression, odds and odds ratios. For some questions it might be convinient to have R or Excel open to use as a calculator. In this set op questions we also focus on model diagnostics. 
 
 ### Question 1
 ```{r Q1}
@@ -80,47 +82,66 @@ quiz(
 In order to correct for possible confounding by age and sex, a logistic regression model
 is fitted. Study the provided output. Which of the following statements is true?
 
-| Variable | B         | S.E.    | Wald        | df | Sig    | Exp(B)      |
-|----------|-----------|---------|-------------|----|--------|-------------|
-| AMOXI    | 1.2859    | 0.1447  | 78.97276    | 1  | 0      | 3.61792262  |
-| DOXY     | 0.7411    | 0.1538  | 23.21886    | 1  | 0      | 2.09824231  |
-| GENDER   | 0.4293    | 0.1068  | 16.15769    | 1  | 0.0001 | 1.53618182  |
-| AGE      | 0.0302    | 0.0158  | 3.653420    | 1  | 0.0568 | 1.03066064  |
-| AGE2     | -0.000313 | 0.00015 | 4.354177    | 1  | 0.386  | 0.99968704  |
-| Constant | -4.5478   | 0.4127  | 121.446     | 1  |        |             |
+| Variable | B         | S.E.    | Wald        | df | Sig     | Exp(B)      |
+|----------|-----------|---------|-------------|----|---------|-------------|
+| AMOXI    | 1.2859    | 0.1447  | 78.97276    | 1  | <0.001  | 3.61792262  |
+| DOXY     | 0.7411    | 0.1538  | 23.21886    | 1  | <0.001  | 2.09824231  |
+| Man      | 0.4293    | 0.1068  | 16.15769    | 1  | 0.0001  | 1.53618182  |
+| AGE      | 0.0302    | 0.0158  | 3.653420    | 1  | 0.0568  | 1.03066064  |
+| AGE2     | -0.000313 | 0.00015 | 4.354177    | 1  | 0.386   | 0.99968704  |
+| Constant | -4.5478   | 0.4127  | 121.446     | 1  |         |             |
 
 -2 Log likelihood 2840.4
 
-### Question 3
+### Question 4
 
 
 ```{r Q3}
 quiz(
   question("Which of the following statements is true? (check all that apply)",
-    answer("Age and sex are strong confounders"),
-    answer("Gender, age and age squared are jointly significant  (p<0.05)", correct=TRUE),
-    answer("The probability of having an adverse event is highest for people that are approximately 50 years old (if other variables are constant)", correct=TRUE),
-    answer("The upper bound of the odds ratio of gender is approximately 1.9", correct=TRUE),
+    answer("Age and sex are strong confounders",message = "If Age and sex are strong confounders we would expect the odds ratios to be different from the unadjusted analysis above"),
+    answer("Gender, age and age squared are jointly significant  (p<0.05)", correct=TRUE, 
+           message = "You could perform a likelihood ratio test using the (-2 log)likelihoods in the outputs above"),
+    answer("If this model would be correct,the probability of having an adverse event is highest for people that are approximately 50 years old (if other variables are constant)", correct=TRUE, message="Consider that ax^2+bx+c has its extreme at -b/2a (just take the derivative). So because a and b are in the table of coefficients we can derive the age where risk is highest "),
+    answer("The upper bound of the odds ratio of man is approximately 1.9", correct=TRUE, message = "first calculate the upperbound on the log-odds scale then transform" ),
     allow_retry = TRUE, random_answer_order = FALSE
   )
 )
 ```
 
-### Question 4
+### Question 5
 
-```{r Q4}
+In this question you are being asked to calculate an odds ratio that does not directly correspond to a single coefficient in the table above. Remember that if needed you can always derive the odds ratio as the antilog of the difference in log odds (like we did to derive the interpretation of the coeffcients in the logistic regression model).
+
+```{r Q5}
+quiz(
+  question("What is the odds ratio of having an adverse event when treated with doxycyclin relative to being treated with amoxicillin all other covariates being equal. )",
+    answer("Less than zero",message = 'remember that odds ratios should be positive'),
+    answer("Between 0 and 0.33"),
+    answer("Between 0.33 and 0.66", correct=TRUE),
+    answer("Between 0.66 and 1"),
+    answer("More than 1", message = 'fill in the betas and Xs in the linear predictor and convert to odds'),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
+
+### Question 6
+
+
+```{r Q6}
 quiz(
   question("What is the probability of an adverse event of a 50 years old man treated with roxy)",
-    answer("Less than zero"),
-    answer("Between 0 and 2 %"),
+    answer("Less than zero",message = 'remember that probabilities should be between 0 and 1'),
+    answer("Between 0 and 2 %", message = 'fill in the betas and Xs in the linear predictor and convert to odds'),
     answer("Between 2% and 4%", correct=TRUE),
-    answer("Between 4% and 10%"),
-    answer("More than 10%"),
+    answer("Between 4% and 10%", message = 'fill in the betas and Xs in the linear predictor and convert to odds'),
+    answer("More than 10%", message = 'fill in the betas and Xs in the linear predictor and convert to odds'),
     allow_retry = TRUE, random_answer_order = FALSE
   )
 )
 ```
-
 
 ## Exercises 
 
@@ -298,7 +319,7 @@ preds <- predict(glm35,type = 'response')
 
 ### Question 6
 
-Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. In `glm` we can do this by including `c(LOC, base=3)` as a model term (3 because thoracic is the third level of this variable which you can check using the `levels` function). Before you run this model, try to find out what will be the estimates for the Constant and for the B’s of the dummies. When you run the new model Check whether the estimates are as expected.
+Now fit the model again after changing the coding of the dummies for LOC such that thoracic is used as reference. In `glm` we can do this by including `c(LOC, base=3)` as a model term (3 because thoracic is the third level of this variable which you can check using the `levels` function). Before you run this model, try to find out what will be the estimates for the Constant and for the dummies. When you run the new model Check whether the estimates are as expected.
 
 ```{r P6-setup}
 ```
@@ -337,7 +358,7 @@ exp(coef(glm36))
 
 Next switch to the 'Deviation coding' contrast for LOC instead by running the command:
  `contrasts(fracture$LOC) <- contr.sum(3)` 
-In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2.
+In this case the effect of category 3 of LOC (the last category) is the negative sum of the effects of the categories 1 and 2. 
 Fit the model using this coding and compare the estimated coefficients again.
 ```{r P7-setup}
 
@@ -375,7 +396,7 @@ contrasts(fracture$LOC)<-contrastsbase
 
 ### Question 8
 
-What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%? (Using the moel from Ex 5.)
+What is the predicted probability of neurological deficit for a patient with a thoracic fracture and a stenosis of 60%? (Using the model from Ex 5.)
 
 ```{r P8-setup}
 glm37 <-glm(DEF~C(LOC, base=3)+STEN,data=fracture, family = binomial)
@@ -408,7 +429,7 @@ predict(glm35, newdata = preddata, type='response' )
 
 The functions cooks.distance and dfbetas gives you the cooks.distances and the dfbetas of the observations. Use:
 ` coo_1 <- cooks.distance(glm35)`
-And try to find the patients with large value for Cook’s Leverage.
+And try to find the patients with large value for Cook's distance.
 You may also sort the cases by the variable (in descending order) and print the cases with a high value. 
 head(fracture[order(coo_1,decreasing = TRUE),], 10)
 
@@ -447,7 +468,7 @@ influence.measures(glm35)
 
 ### Question 10
 
-Compute the area under the AUC curve for model `glm35` using the prediction and performance functions of the `ROCR` package.
+Plot the area under the AUC curve for the model you estimated in question 5 (which we have called `glm35`) using the `ROC` function of the `Epi` package. Also compute Nagelkerke's R2 measure. For this you can use the `PseudoR2` function in the `DescTools` package. The packages `Epi` and `DescTools` are already loaded.
 
 
 ```{r P10-setup}
@@ -459,21 +480,19 @@ glm35 <-glm(DEF~LOC+STEN,data=fracture, family = binomial)
 ```
 
 ```{r P10-hint-1}
-# Using the ROCR library you first use the prediction function on the generated predictions
-# to make a prediction object. 
-# The auc can now be used to calculate the AUC by using the performance function on this object
-# with argument, measure='auc.
-# NB: the ROCR package is already loaded
+# The ROC functions needs the predicted values of the model and the true outcomes as inputs. See the course notes for details.
 ```
 
-```{r P10-hint-2}
-# The code is:
+```{r P10-hint-2, eval=FALSE}
+prob <- predict(___, ___)
+ROC(test = ___, stat = glm35$y)
+PseudoR2(____, which='Nagelkerke')
+```
+
+```{r P10-solution}
 prob <- predict(glm35, type='response')
-pred <- prediction(prob, fracture$DEF)
-perf<-performance(pred, 'tpr', 'fpr')
-(auc <- performance(pred, measure='auc'))
-
-
+ROC(test = prob, stat = glm35$y)
+PseudoR2(glm35, which='Nagelkerke')
 ```
 
 

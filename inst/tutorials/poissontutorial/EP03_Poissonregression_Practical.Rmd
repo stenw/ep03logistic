@@ -3,6 +3,9 @@ title: "Poisson regression"
 output: 
   learnr::tutorial:
      allow_skip: true
+tutorial:
+  id: "io.shinyapps.erasmusmc.poisreg"
+  version: 0.924     
 runtime: shiny_prerendered
 ---
 
@@ -15,11 +18,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Quiz
 
-The following questions test your knowledge about poisson regression
+The following questions test your knowledge about Poisson regression
 
 ### Question 1
 A trial is set up to compare a new procedure against usual care. We investigate the number of interventions.
-Consider the following output from a poisson regression:
+Consider the following output from a Poisson regression:
 
 |              | beta     | Std. Error | z value |
 |--------------|----------|------------|---------|
@@ -35,7 +38,7 @@ quiz(
     answer("smaller than 0.01"),
     answer("between 0.01 and 0.05"),
     answer("between 0.05 and 0.1", correct=TRUE),
-    answer("larger than 0.1"),
+    answer("0.1 or larger"),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -61,7 +64,7 @@ quiz(
 
 ```{r Q3}
 quiz(
-  question("What is the incidence ratio of the intervention?",
+  question("What is the incidence rate ratio of the intervention?",
     answer("0.54"),
     answer("0.62"),
     answer("1.62"),
@@ -114,9 +117,9 @@ The table below presents dose-response data concerning the relationship between 
 Confirm that the number of person years and the number of events in the data set `doll`. For this we need to weight the data. 
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
 w1 <- rep((1:NROW(doll)),doll$prsyears)
-with(doll[w1,], table(smoke,age))
-w2 <- rep((1:NROW(doll)),doll$death)
-with(doll[w2,], table(smoke,age))  
+with(doll[w1,], table(___, ___))
+w2 <-
+with(____)  
 
 ```
 ```{r P1-hint-1}
@@ -137,13 +140,13 @@ xtabs(death~age+smoke, data=doll)
 
 ### Question 2
 
-Estimate a poisson model using only an intercept. Call the model glm1 What is the meaning of the estimated coefficient? Also estimate the coefficient by hand using the table.
+Now we are going to estimate a Poisson model. First create the term to use as an offset variable. Now estimate a Poisson model using only an intercept (and the offset). Call the model glm1 What is the interpretation of the estimated coefficient? Also estimate the coefficient by hand using the table.
 
 
-```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
-doll$logpy <- log(doll$prsyears)
-glm1<-glm(death~1+offset(logpy),  family=poisson, data=doll)
-summary(glm1)
+```{r P2, exercise=TRUE, exercise.lines = 10}
+doll$logpy <- log(___)
+glm1<-glm(___~1+offset(____),  family=poisson, data=doll)
+summary(___)
 ```
 
 ```{r P2-hint-1}
@@ -199,7 +202,7 @@ anova(glm3, glm2, test = 'LRT')
 ```
 
 ### Question 5
-Now we check if the effect of age can be better modlled by a linear trend. Use `as.numeric' to convert the factor to a numeric value. Call the model glm4. Does this model do better than the previous model (use a likelihood ratio test)?
+Now we check if the effect of age can be better modlled by a linear trend. Use `as.numeric` to convert the factor to a numeric value. Call the model glm4. Does this model do better than the previous model (use a likelihood ratio test)?
 
 ```{r P5, exercise=TRUE, exercise.lines = 10}
 
@@ -239,6 +242,7 @@ glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
 glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
 glm3 <- glm(death~1+age+smoke+offset(logpy),  family=poisson, data=doll)
 glm4 <- glm(death~1+as.numeric(age)+smoke+offset(logpy),  family=poisson, data=doll)
+doll$numage <- as.numeric(doll$age)
 ```
 
 

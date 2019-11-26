@@ -5,7 +5,7 @@ output:
      allow_skip: true
 tutorial:
   id: "io.shinyapps.erasmusmc.logisticregression2"
-  version: 0.923     
+  version: 0.924     
 runtime: shiny_prerendered
 ---
 
@@ -31,7 +31,6 @@ quiz(
     type='multiple',         
     answer("In regression an outlier is a value with an unsual value of the dependent variable given the independent  variables", correct=TRUE),
     answer("Observations with high leverage have (an) unusual independant variable.", correct=TRUE ),
-    answer("An odds of one correspons to a probability of 50%", correct=TRUE),
     answer("The deviance is a measure of leverage"),
     answer("Cook's distance says something about how influential an observation is", correct=TRUE),
     answer("The dfbetas say something about how influential an observation is is", correct=TRUE),
@@ -67,11 +66,11 @@ which had a (optimized) minus two log likelihood of 2861.92.
 ```{r Q2}
 quiz(
   question("What is the odds ratio of an adverse event of doxycyclin versus roxitromycin?",
-    answer("Less than 0.3"),
-    answer("Between 0.3 and 0.6%"),
-    answer("Between 0.6 and 1.5"),
+    answer("Less than 0.3",message = '(133/1720)/(67/1823)'),
+    answer("Between 0.3 and 0.6%",message = '(133/1720)/(67/1823)'),
+    answer("Between 0.6 and 1.5",message = '(133/1720)/(67/1823)'),
     answer("Between 1.5 and 3", correct=TRUE),
-    answer("More than 3", correct=FALSE),
+    answer("More than 3", message = '(133/1720)/(67/1823)'),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -207,6 +206,14 @@ Next look at the relationship between percentage stenosis and localization, desc
 
 ```{r P2-hint-1}
 
+# The code is:
+#boxplot(~, data=)
+# estimate the relationship using LOGISTIC regression
+#glm3b<-glm(.~., family=, data=)
+# Now Describe model by OR and CI
+
+# test using a LR test
+#drop1(, test = 'LRT')  
 
 ```
 ```{r P2-hint-2}

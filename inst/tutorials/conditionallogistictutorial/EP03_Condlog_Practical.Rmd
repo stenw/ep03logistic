@@ -6,7 +6,7 @@ output:
 runtime: shiny_prerendered
 tutorial:
   id: "io.shinyapps.erasmusmc.condregression"
-  version: 0.924
+  version: 0.925
 ---
 
 ```{r setup, include=FALSE}
@@ -141,6 +141,7 @@ Because the patients are matched on age we cannot put the main effect of this va
 
 
 ```{r P2-setup}
+endom$OUT<-endom$OUTCOME=='case'
 fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
 ```
 
@@ -165,6 +166,12 @@ anova(fit2, fit1)
 
 ### Question 3
 
+
+```{r P3-setup}
+endom$OUT<-endom$OUTCOME=='case'
+fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
+```
+
 We think  `GALL`, `NON`, `OB` and `HYP` could be important variables. Extend model `fit1` to accommodate this. (we leave out the interaction this time) Use again the `summary()` method to get a detailed output and 
 interpret the results. Name the fitted model `fit3`.
 
@@ -186,6 +193,9 @@ summary(fit3)
 Perhaps the effect of EST is different if you have gall bladder desease. Add the interaction to the model. Check if it is significant using an chi2-test
 
 ```{r P4-setup}
+endom$OUT<-endom$OUTCOME=='case'
+fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
+
 fit3 <- clogit(OUT ~ EST + GALL + NON + OB + HYP + strata(STRATUM), data = endom)
 ```
 
@@ -211,6 +221,9 @@ Add the dose to the model  with EST + GALL + NON + OB + HYP and perform a chi2 t
 
 
 ```{r P5-setup}
+endom$OUT<-endom$OUTCOME=='case'
+fit1 <- clogit(OUT ~ EST + strata(STRATUM), data=endom)
+
 fit3 <- clogit(OUT ~ EST + GALL + NON + OB + HYP + strata(STRATUM), data = endom)
 fit4<-clogit(OUT ~ EST + GALL+NON+OB+HYP+GALL*EST+ strata(STRATUM), data=endom)
 ```

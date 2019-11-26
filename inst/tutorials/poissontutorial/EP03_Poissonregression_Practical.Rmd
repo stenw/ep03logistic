@@ -5,13 +5,14 @@ output:
      allow_skip: true
 tutorial:
   id: "io.shinyapps.erasmusmc.poisreg"
-  version: 0.924     
+  version: 0.926     
 runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
 library("learnr")
-#data("doll", package = "EP03logistic")
+library(EP03logistic)
+data("doll", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -21,7 +22,7 @@ knitr::opts_chunk$set(echo = FALSE)
 The following questions test your knowledge about Poisson regression
 
 ### Question 1
-A trial is set up to compare a new procedure against usual care. We investigate the number of interventions.
+A trial is set up to compare a new procedure against usual care. We investigate the number of adverse events.
 Consider the following output from a Poisson regression:
 
 |              | beta     | Std. Error | z value |
@@ -82,13 +83,30 @@ quiz(
   question(
 "What is the lower limit of the 95% confidence interval of the intervention?", 
     answer("0.056"),
-    answer("1.056"),
+    answer("1.56"),
     answer("1.006", correct = TRUE),
     answer("2.006"),
     allow_retry = TRUE, random_answer_order = FALSE
   )
 )
 ```
+
+### Question 5
+
+What is the expected number of events of a twenty year old on the intervention group?
+```{r Q5}
+quiz(
+  question(
+"What is the lower limit of the 95% confidence interval of the intervention?", 
+    answer("0.13"),
+    answer("1.15"),
+    answer("3.16", correct = TRUE),
+    answer("9.3"),
+    allow_retry = TRUE, random_answer_order = FALSE
+  )
+)
+```
+
 
 ## Exercises
 
@@ -115,26 +133,33 @@ The table below presents dose-response data concerning the relationship between 
 ### Question 1
 
 Confirm that the number of person years and the number of events in the data set `doll`. For this we need to weight the data. 
+
+```{r P1-setup}
+data(doll,package = 'EP03logistic')
+```
+
+
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
-w1 <- rep((1:NROW(doll)),doll$prsyears)
-with(doll[w1,], table(___, ___))
-w2 <-
-with(____)  
+#w1 <- rep((1:NROW(doll)),doll$prsyears)
+#with(doll[w1,], table(___, ___))
+#w2 <-
+#with(____)  
 
 ```
+
 ```{r P1-hint-1}
 # The weight we need to use are equal to the prsyears and death columns. We 
 # need to repeat the row this number of times to use the table command 
 ```
 ```{r P1-hint-2}
 # Use:
-w1 <- rep((1:NROW(doll)),doll$prsyears)
-with(doll[w1,], table(smoke, age))
-w2 <- rep((1:NROW(doll)),doll$death)
-with(doll[w2,], table(smoke, age))
+#w1 <- rep((1:NROW(doll)),doll$prsyears)
+#with(doll[w1,], table(smoke, age))
+#w2 <- rep((1:NROW(doll)),doll$death)
+#with(doll[w2,], table(smoke, age))
 # alternatively use
-xtabs(prsyears~age+smoke, data=doll)
-xtabs(death~age+smoke, data=doll)
+#xtabs(prsyears~age+smoke, data=doll)
+#xtabs(death~age+smoke, data=doll)
 
 ```
 
@@ -143,10 +168,16 @@ xtabs(death~age+smoke, data=doll)
 Now we are going to estimate a Poisson model. First create the term to use as an offset variable. Now estimate a Poisson model using only an intercept (and the offset). Call the model glm1 What is the interpretation of the estimated coefficient? Also estimate the coefficient by hand using the table.
 
 
+
+```{r P2-setup}
+data(doll,package = 'EP03logistic')
+```
+
+
 ```{r P2, exercise=TRUE, exercise.lines = 10}
-doll$logpy <- log(___)
-glm1<-glm(___~1+offset(____),  family=poisson, data=doll)
-summary(___)
+#doll$logpy <- log(___)
+#glm1<-glm(___~1+offset(____),  family=poisson, data=doll)
+#summary(___)
 ```
 
 ```{r P2-hint-1}
@@ -154,15 +185,22 @@ summary(___)
 ```
 ```{r P2-hint-2}
 # The code is:
-doll$logpy <- log(doll$prsyears)
-glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
-summary(glm1)
+#doll$logpy <- log(doll$prsyears)
+#glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
+#summary(glm1)
 ```
 
 ### Question 3
 
 Now fit the model with age category. Call the model glm2. Verify that you can calculate these coefficients also by hand.
 What can you say about the goodness of fit.
+
+
+```{r P3-setup}
+data(doll,package = 'EP03logistic')
+doll$logpy <- log(doll$prsyears)
+```
+
 
 ```{r P3, exercise=TRUE, exercise.lines = 10}
 glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
@@ -173,15 +211,20 @@ glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
 ```
 ```{r P3-hint-2}
 # The code is:
-glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
-summary(glm2)
+#glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
+#summary(glm2)
 ```
 
 ### Question 4
 
 Now add the variable smoke. Call the model glm3. What can you say about the goodness of fit.
 
+
+
 ```{r P4-setup}
+
+data(doll,package = 'EP03logistic')
+doll$logpy <- log(doll$prsyears)
 glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
 glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
 ```
@@ -204,18 +247,27 @@ anova(glm3, glm2, test = 'LRT')
 ### Question 5
 Now we check if the effect of age can be better modlled by a linear trend. Use `as.numeric` to convert the factor to a numeric value. Call the model glm4. Does this model do better than the previous model (use a likelihood ratio test)?
 
+
+```{r P5-setup}
+data(doll,package = 'EP03logistic')
+doll$logpy <- log(doll$prsyears)
+glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
+glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
+glm3 <- glm(death~1+age+smoke+offset(logpy),  family=poisson, data=doll)
+
+
+```
+
+
+
 ```{r P5, exercise=TRUE, exercise.lines = 10}
 
 
 
 ```
 
-```{r P5-setup}
-glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
-glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
-glm3 <- glm(death~1+age+smoke+offset(logpy),  family=poisson, data=doll)
 
-```
+
 
 
 
@@ -238,6 +290,7 @@ Now use  `log(as.numeric(age))` to model the effect of age. What about the goodn
 ```
 
 ```{r P6-setup}
+doll$logpy <- log(doll$prsyears)
 glm1 <- glm(death~1+offset(logpy),  family=poisson, data=doll)
 glm2 <- glm(death~1+age+offset(logpy),  family=poisson, data=doll)
 glm3 <- glm(death~1+age+smoke+offset(logpy),  family=poisson, data=doll)

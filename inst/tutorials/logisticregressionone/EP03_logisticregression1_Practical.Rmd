@@ -3,15 +3,13 @@ title: "Logistic regression 1"
 output: 
    learnr::tutorial:
      allow_skip: true
-  #html_document:
-  #  number_sections: true
 tutorial:
   id: "io.shinyapps.erasmusmc.logisticregression1"
-  version: 0.925
+  version: 0.928
 runtime: shiny_prerendered
 ---
 
-```{r setup-switch, include = FALSE}
+```{r setup-switch, include = FALSE, echo=FALSE, results='hide'}
 if (names(rmarkdown::metadata$output) == "learnr::tutorial") {
   library(learnr)
   learnr::initialize_tutorial()
@@ -28,7 +26,7 @@ if (names(rmarkdown::metadata$output) == "learnr::tutorial") {
 }
 ```
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, results='hide'}
 library('EP03logistic')
 data("bmt", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
@@ -38,9 +36,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Quiz
 
 The following questions test your knowledge about logistic regression, odds and odds ratios.
-```{r}
-names(print(rmarkdown::metadata$output))
-```
 
 ### Question 1
 ```{r Q1, eval=!static}
@@ -204,11 +199,14 @@ Compute the odds ratio of the sexmatch = 1 versus sexmatch = 0. Use R as a calcu
 
 ```
 
-```{r P15-hint-1, exercise=TRUE, exercise.lines = 10}
+```{r P15-hint-1, exercise.lines = 10}
 # Fill in the formula (a/c)/(b/d)
 
 ```
 
+```{r P15-hint-2, exercise.lines = 10}
+(21/63)/(32/50)
+```
 
 ### Question 3
 
@@ -222,10 +220,11 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 ```
 
 ```{r P2, exercise=TRUE, exercise.lines = 10, eval=FALSE, include=static, echo=!static, resuts=ifelse(static,'hide','markup')}
-print(knitr::opts_current$get())
 glm1<-glm(___ ~ ____, family = ____, data=___)
 glm1
 ```
+If the response is a 0 /1 coded variable R the model predicts the log odds of the outcome that is coded 1. If the response is a factor by default the first level is the refence level so we model the log odds of the last level.
+
 
 ```{r P2-hint-1}
 # Look at the examples at the end of the chapter on logistic regression in the course notes and fill in the blanks.
@@ -249,6 +248,7 @@ glm1<-glm(agvhd ~ sexmatch, family = 'binomial', data=bmt)
 ```
 
 ```{r P3, exercise=TRUE, exercise.lines = 10}
+
 ```
 
 ```{r P3-hint-1}
@@ -267,6 +267,8 @@ exp(coef(glm1))
 exp(confint(glm1))
 
 ```
+
+The odds ratio should be the same than the one you computed manually. The odds ratio is approximately a half indicating that we expect the odds of agvhd to be halved when the sex of the host matches that of the donor. The effect is not statistically significant at the 5% level according to the Wald test. Also 1 is included in the 95% confidence interval. (Usually the conclusion based on the confidence interval agrees with  that of the Wald test but this is not always the case as the methods on which they are based are different.)
 
 ### Question 5
 
@@ -293,6 +295,8 @@ drop1(___, test=___)
 drop1(glm1, test='LRT')
 ```
 
+Here the LRT closely agrees with the Wald test. 
+
 ## Exercises (p2)
 
 We will now look at the effect of a continuous variable on the odds of `agvhd`. 	
@@ -314,16 +318,23 @@ bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
 # Use the glm function as before. Look at the course notes to see what function you can use to create a confidence interval.
 ```
 
-```{r P5-hint-2}
+```{r P5-hint-2, exercise.lines = 10}
 # The code is:
 glmAge<-glm(agvhd ~ agedon, family = 'binomial', data=bmt)
+summary(glmAge)
 exp(coef(glmAge))
 exp(confint(glmAge))
+# For every year that the donor is older the odds of agvhd increase with a factor of 1.034
+# all other things being equal
+# So for 10 years the effect is approximately 40%
 ```
+
+Now 1 is not included in the confidence interval suggesting that the effect of the age of the donor is unlikely to be caused by sampling error. 
+
 
 ### Question 7
 
-We are now going to plot the relation between the age of the donor and the estimated probabilities. We can use the `predict` function for this. The first argument is  the estimated `glm`. When we use `type = 'response'` we  obtain the predictions on the scale of the response (the 0-1 scale of probabilities, this in contrast to the scale of the linear predictor).
+We are now going to plot the relation between the age of the donor and the estimated probabilities. We can use the `predict` function for this. The first argument is  the estimated `glm`. When we use `type = 'response'` we  obtain the predictions on the scale of the response (the 0-1 scale of probabilities, this in contrast to the scale of the linear predictor you will get when you use `type='link'`).
 
 ```{r P6-setup}
 bmt$sexmatch <- ifelse(bmt$sexrec==bmt$sexdon, 1, 0)
@@ -335,7 +346,9 @@ y <- predict(____, type = ____)
 
 plot(x=bmt$agedon[order(bmt$agedon)],  
   y=y[order(bmt$agedon)],
-  type='l')
+  type='l',
+  xlab='age donor',
+  ylab='Prob')
 ```
 
 ```{r P6-hint-1}
@@ -347,7 +360,9 @@ plot(x=bmt$agedon[order(bmt$agedon)],
 y <- predict(glmAge, type = 'response')
 plot(x=bmt$agedon[order(bmt$agedon)],  
   y=y[order(bmt$agedon)],
-  type='l')
+  type='l',
+  xlab='age donor',
+  ylab='Prob')
 ```
 
 ### Question 8

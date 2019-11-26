@@ -1,8 +1,8 @@
 Package: EP03logistic
 Title: Supporting Material for the Logistic Regression Course of the NIHES EP03 Course
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: person("Sten", "Willemsen", email = "s.willemsen@erasmusmc.nl", role = c("aut", "cre"))
-Description: This package contains data, functions and quizes for the logistic regression part of the NIHES EP03 Course
+Description: This package contains data, functions and quizzes for the logistic regression part of the NIHES EP03 Course
 Depends: R (>= 3.2.0)
 License: GPL-3
 Encoding: UTF-8
@@ -16,6 +16,10 @@ Imports:
   DescTools,
   Epi,
   car,
-  learnr
+  learnr,
+  rms,
+  MASS,
+  Hmisc
 Suggests:
-  logistf
+  logistf,
+  brent

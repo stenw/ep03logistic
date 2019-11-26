@@ -5,7 +5,7 @@ output:
      allow_skip: true
 tutorial:
   id: "io.shinyapps.erasmusmc.logisticregression3"
-  version: 0.924
+  version: 0.925
 runtime: shiny_prerendered
 ---
 
@@ -29,8 +29,7 @@ quiz(
     type='multiple',         
     answer("Nagelkerke's R2 measure is a rescaled version of Cox and Snell's R2", correct=TRUE),
     answer("The test of Hosmer and Lemeshow is not suitable for ungrouped data"),
-    answer("An odds of one correspons to a probability of 50%", correct=TRUE),
-    answer("An ROC curve traditionally has the specificity plotted on the x-axis"),
+      answer("An ROC curve traditionally has the specificity plotted on the x-axis"),
     answer("The c-statistic is a measure of the ability of the model to discriminate between the two outcome categories", correct=TRUE),
         allow_retry = TRUE, random_answer_order = FALSE
   )
@@ -72,7 +71,7 @@ First plot the data set. What are the number of subjects that are tested how man
 ```{r P1-hint-1}
 # you can use the sum command to add the numbers in the Ntested and Npos columns respectively.
 ```
-```{r P1-solution}
+```{r P1-hint-2}
 vaccination$Nneg <- with(vaccination, Ntested-Npos)
 vaccination
 sum(vaccination$Ntested)
@@ -95,18 +94,18 @@ vaccination$Nneg <- with(vaccination, Ntested-Npos)
 
 ```
 
-```{r P2-hint-1, exercise=TRUE, exercise.lines = 10}
+```{r P2-hint-1, exercise.lines = 10}
 # In the chapter about logistic regression in the course notes it is explained how to use the glm function for aggregated data. Perform a likelihood ratio test on the effect of the method.
 
 ```
 
-```{r P2-hint-2, exercise=TRUE, exercise.lines = 10, eval=FALSE}
+```{r P2-hint-2, exercise.lines = 10, eval=FALSE}
 glm1 <- glm(cbind(Npos, Nneg) ~  ___ , data=___, family=___)
 ___(coef(___))
 exp(confint(___))
 ```
 
-```{r P2-solution, exercise=TRUE, exercise.lines = 10}
+```{r P2-hint-3, exercise.lines = 10}
 glm1 <- glm(cbind(Npos, Nneg) ~ Method, data=vaccination, family='binomial')
 exp(coef(glm1))
 exp(confint(glm1))
@@ -132,7 +131,7 @@ glm1 <- glm(cbind(Npos, Nneg) ~ Method, data=vaccination, family='binomial')
 # Add the covariates to the formula.
 
 ```
-```{r P3-solution}
+```{r P3-hint-2}
 glm2 <- glm(cbind(Npos, Nneg) ~ Method + Area + Vaccine.batch,
             data=vaccination, family='binomial')
 exp(coef(glm2))
@@ -195,6 +194,11 @@ glm2 <- glm(cbind(Npos, Nneg) ~ Method + Area + Vaccine.batch,
 
 ```
 
-```{r P5-solution}
+
+```{r P5-hint-1}
+#influencePlot(___)
+```
+
+```{r P5-hint-2}
 influencePlot(glm2)
 ```

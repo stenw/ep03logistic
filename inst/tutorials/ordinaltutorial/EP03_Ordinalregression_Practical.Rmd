@@ -5,14 +5,20 @@ output:
      allow_skip: true
 tutorial:
   id: "io.shinyapps.erasmusmc.ordreg"
-  version: 0.924     
+  version: 0.929     
 runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
 library("learnr")
 library(MASS)
+library(Hmisc)
+library(survival)
+library(lattice)
+library(ggplot2)
+library(SparseM)
 library(rms)
+library(EP03logistic)
 data("arthritis", package = "EP03logistic")
 knitr::opts_chunk$set(echo = FALSE)
 ```
@@ -28,11 +34,11 @@ The following questions test your knowledge about ordinal logistic regression
 
 ```{r Q1}
 quiz(
-  question("What is the p-value of the coefficient of age?",
-    answer("smaller than 0.01"),
-    answer("between 0.01 and 0.05"),
-    answer("between 0.05 and 0.1", correct=TRUE),
-    answer("0.1 or larger"),
+  question("What are the odds that are moddelled in the proportional odds model?",
+    answer("The odds of being in category k vs the odds of being in any lower category"),
+    answer("The ods of being in category k vs being in caegory k-1"),
+    answer("The odds of being at least in category k  vs being in a any category lower than k", correct=TRUE),
+    answer("the odds of advancing to category k conditional of being in category k-1 or higher"),
         allow_retry = TRUE, random_answer_order = FALSE
   )
 )
@@ -43,76 +49,30 @@ quiz(
 
 ```{r Q2}
 quiz(
-  question("What is the p-value of the intervention?",
-    answer("smaller than 0.01"),
-    answer("between 0.01 and 0.05", correct=TRUE),
-    answer("between 0.05 and 0.1"),
-    answer("larger than 0.1"),
-        allow_retry = TRUE, random_answer_order = FALSE
+  question("Select all true statements?",
+    answer("The continuation ratio model is a model for an ordinal response",correct = TRUE),
+    answer("The Probit model is a model for binary outcomes", correct=TRUE),
+    answer("The polytomous regression model can only be used if the response is ordinal"),
+    answer("The zero inflated Poisson model is a model for overdispersed count data",correct = TRUE),
+        allow_retry = TRUE, random_answer_order = FALSE, type='multiple'
   )
 )
 ```
 
-### Question 3
-
-
-```{r Q3}
-quiz(
-  question("What is the incidence rate ratio of the intervention?",
-    answer("0.54"),
-    answer("0.62"),
-    answer("1.62"),
-    answer("1.87", correct=TRUE),
-    allow_retry = TRUE, random_answer_order = FALSE
-  )
-)
-```
-
-### Question 4
-
-What is the lower limit of the 95% confidence interval of irr the intervention?
-```{r Q4}
-quiz(
-  question(
-"What is the lower limit of the 95% confidence interval of the intervention?", 
-    answer("0.056"),
-    answer("1.056"),
-    answer("1.006", correct = TRUE),
-    answer("2.006"),
-    allow_retry = TRUE, random_answer_order = FALSE
-  )
-)
-```
-
-## Exercises
-
-In this exercise we look at the data from a trail on rheumatoid arthritis. The outcome is an ordinal variable.
+## Exercise: Proportional odds model
 
 ### Question 1
 
 Examine the outcome at baseline and follow-up. Make a frequency table of `baseline` and `arthritis_fu`.
  
 ```{r P1, exercise=TRUE, exercise.lines = 10, eval=FALSE}
-w1 <- rep((1:NROW(doll)),doll$prsyears)
-with(doll[w1,], table(___, ___))
-w2 <-
-with(____)  
+
+
 
 ```
 ```{r P1-hint-1}
-# The weight we need to use are equal to the prsyears and death columns. We 
-# need to repeat the row this number of times to use the table command 
-```
-```{r P1-hint-2}
-# Use:
-w1 <- rep((1:NROW(doll)),doll$prsyears)
-with(doll[w1,], table(smoke, age))
-w2 <- rep((1:NROW(doll)),doll$death)
-with(doll[w2,], table(smoke, age))
-# alternatively use
-xtabs(prsyears~age+smoke, data=doll)
-xtabs(death~age+smoke, data=doll)
-
+table(arthritis$baseline)
+table(arthritis$arthritis_fu)
 ```
 
 ### Question 2
@@ -164,17 +124,13 @@ levels(arthritis$arthritis_fu) <- list("poor"=c("very poor", "poor"),
 ```
 
 ```{r P4, exercise=TRUE, exercise.lines = 10}
-po1<-polr(~, )
+#po1<-polr(~, )
 
 ```
 
 ```{r P4-hint-1}
 po1<-polr(arthritis_fu~trt, data=arthritis)
 summary(po1)
-po2<- vgam(as.ordered(arthritis_fu) ~ trt, propodds, data = arthritis)
-
-summary(po2)
-coef(po2, matrix=TRUE)
 ```
 
 Observe that there are two intercepts. One for each cutpoint that devide the distribution of the latent variable into the three groups defined by the outcome (poor, fair and good). 
@@ -281,7 +237,7 @@ po2<-polr(arthritis_fu~trt+sex+age+baseline, data=arthritis)
 
 
 
-
+## Exercise: Continuation ratio model
 
 ### Question 8
 The continuation ratio model is an other way to estimate a model with an ordinal response. This model models the log odds of the various categories as: 
@@ -316,7 +272,7 @@ art_cr <- data.frame(arthritis_cc[cr_info$subs, ], y=cr_info$y, border=cr_info$c
 
 
 ### Question 9
-We can now use the `glm` function to estimate a logistic regression model on the resulting data set.
+We can now use the `glm` function to estimate a logistic regression model on the resulting data set. Try this yourself do not forget to include the `border` variable. What are the odds ratios and their confidence intervals?
 
 
 ```{r Pcr7-setup}
@@ -339,6 +295,11 @@ art_cr <- data.frame(arthritis_cc[cr_info$subs, ], y=cr_info$y, border=cr_info$c
 ```
 
 ```{r P7cr, exercise=TRUE, exercise.lines = 10}
+
+
+```
+
+```{r P7cr-hint,  exercise.lines = 10}
 cr1<-glm(y~trt+border, data=art_cr) 
 summary(cr1)
 exp(coef(cr1))

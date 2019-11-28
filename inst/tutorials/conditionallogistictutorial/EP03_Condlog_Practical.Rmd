@@ -70,7 +70,7 @@ quiz(
   question("True or false",
     answer("True"),
     answer("False", correct = TRUE),
-    allow_retry = TRUE, random_answer_order = FALSE,  incorrect="Even in normail (unconditional) logistic regression, it is the antilog of the coefficients that can be interpreted as ORs."
+    allow_retry = TRUE, random_answer_order = FALSE,  incorrect="Even in normal (unconditional) logistic regression, it is the antilog of the coefficients that can be interpreted as ORs."
   )
 )
 ```
